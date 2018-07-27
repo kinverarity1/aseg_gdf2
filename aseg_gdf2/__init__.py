@@ -3,36 +3,44 @@ import logging
 import os
 import re
 
-import dask.dataframe as dd
 import pandas as pd
 
 logger = logging.getLogger(__name__)
 
 
-def read(filename):
+def read(filename, **kwargs):
     for fn in glob.glob(filename + '*'):
         if fn.lower().endswith('dfn'):
-            return GDF2(fn)
+            return GDF2(fn, **kwargs)
         elif fn.lower()[-3:] in ('dat', 'ddf', 'des', 'met'):
             for ext in ('DFN', 'dfn'):
                 fn2 = fn[:-3] + ext
                 if os.path.isfile(fn2):
-                    return GDF2(fn2)
+                    return GDF2(fn2, **kwargs)
         else:
             for ext in ('DFN', 'dfn'):
                 fn2 = fn[:-3] + ext
                 if os.path.isfile(fn2):
-                    return GDF2(fn2)
+                    return GDF2(fn2, **kwargs)
     raise OSError('No data package found at {}'.format(filename))
 
 
 
 class GDF2(object):
-    def __init__(self, dfn_filename, **kwargs):
-        self.parse_dfn(dfn_filename)
-        self.parse_dat(self.find_dat_files())
+    '''Load GDF2 data package.
 
-    def parse_dfn(self, dfn_filename, join_null_data_rts=True, **kwargs):
+    Arguments:
+        dfn_filename (str)
+        method (str): how to read the data file. Either assume it is
+            delimited by whitespace (``'whitespace'``) or use the 
+            field widths specified in the .dfn file (``'fixed-widths'``).
+
+    '''
+    def __init__(self, dfn_filename, method='whitespace', **kwargs):
+        self._parse_dfn(dfn_filename)
+        self._parse_dat(self._find_dat_files(), method)
+
+    def _parse_dfn(self, dfn_filename, join_null_data_rts=True, **kwargs):
         self.record_types = {}
         with open(dfn_filename, 'r') as f:
             self.dfn_filename = dfn_filename
@@ -70,6 +78,7 @@ class GDF2(object):
                             'long_name': '',
                             'comment': '',
                         }
+                        field = field.strip()
                         if field == 'END DEFN':
                             logger.debug('line {}: end of field definition for record type RT={}'.format(i, rt))
                             continue
@@ -114,7 +123,7 @@ class GDF2(object):
                         if f['name'] == 'RT':
                             self.record_types[rt]['format'] = f['format']
 
-    def find_dat_files(self):
+    def _find_dat_files(self):
         for ext in ('dat', 'DAT'):
             filename = self.dfn_filename[:-3] + ext
             if os.path.isfile(filename):
@@ -122,69 +131,44 @@ class GDF2(object):
         logger.error('No data file located.')
         return ''
 
-    def parse_dat(self, dat_filename, method='delimited'):
+    def _parse_dat(self, dat_filename, method='whitespace'):
         self.dat_filename = dat_filename
-        self.read_fwf_kws = {
+        self.method = method
+        self._read_kws = {
             'names': [f['name'] for f in self.record_types['']['fields']],
-            'widths': [f['width'] for f in self.record_types['']['fields']],
-            'na_filter': False,
             'header': None,
         }
+        if method == 'fixed-widths':
+            self._read_func = pd.read_fwf
+            self._read_kws.update({
+                'widths': [f['width'] for f in self.record_types['']['fields']],
+                'na_filter': False,
+            })
+        elif method == 'whitespace':
+            self._read_func = pd.read_table
+            self._read_kws.update({
+                'delimiter': '\s+',
+            })
+        print(self._read_func)
+        print(self._read_kws)
 
-    def data_chunked(self, chunksize=10000, **kwargs):
-        kws = dict(**self.read_fwf_kws)
+    def chunks(self, chunksize=500000, **kwargs):
+        kws = dict(**self._read_kws)
         kws.update(kwargs)
         kws['chunksize'] = chunksize
-        return pd.read_fwf(self.dat_filename, **kws)
+        print(kws)
+        return self._read_func(self.dat_filename, **kws)
 
-    # def label_null_data(self):
-    #     for i, field in enumerate(self.record_types['']['fields']):
-    #         s = sum([f['shape'][0] for f in self.record_types['']['fields'][:i]])
-    #         field_data = self.df.iloc[:, s: s + field['shape'][0]].copy()
-    #         if field_data.shape[1] == 1:
-    #             data = field_data.iloc[:, 0].values
-    #         else:
-    #             data = field_data.values
-    #         self.data[field['name']] = data
-    
+    def iterrows(self, *args, **kwargs):
+        for chunk in self.chunks(*args, **kwargs):
+            for row in chunk.itertuples():
+                yield row._asdict()
 
+    def get_fields(self, usecols):
+        kws = dict(**self._read_kws)
+        kws['usecols'] = usecols
+        return self._read_func(self.dat_filename, **kws)
 
-class DAT(object):
-    '''Represent GDF2 data file (.dat).
-
-    Args:
-        filename (str): path of .dat file
-        method (str): either 'delimited' - others to come. If
-            'delimited' then ``kws['delimiter'] = '\s+'`` will
-            be included for pandas.read_table
-        **kws: keyword arguments for pandas.read_table
-
-    '''
-    def __init__(self, filename, method='delimited', dfn=None, **kws):
-        self.dfn = dfn
-        self.funcs = {}
-        self.filename = filename
-        self.method = method
-        if self.method == 'delimited':
-            if not 'delimiter' in kws:
-                kws['delimiter'] = '\s+'
-            self.kws = kws
-            self.refresh()
-
-    def refresh(self):
-        self.df = dd.read_table(self.filename, **self.kws)
-
-    def null_field(self, name):
-        for i, f in enumerate(self.dfn.record_types['']['fields']):
-            s = sum([f['shape'][0] for f in self.dfn.record_types['']['fields'][:i]])
-            if f['name'] == name:
-                field_data = self.df.iloc[:, s: s + f['shape'][0]].copy()
-                if field_data.shape[1] == 1:
-                    return field_data.iloc[:, 0].values
-                else:
-                    return field_data.values
-    
+    @property
     def null_fields(self):
-        for f in self.dfn.record_types['']['fields']:
-            yield self.null_field(f['name'])
-
+        return [f['name'] for f in self.record_types['']['fields']]
