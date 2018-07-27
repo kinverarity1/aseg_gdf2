@@ -21,7 +21,10 @@ def test_iterrows_2():
 def test_chunksize():
     gdf = aseg_gdf2.read(dset('3bcfc711', 'GA1286_Waveforms'))
     lengths = []
-    for chunk in gdf.chunks(chunksize=10000):
+    for chunk in gdf.df_chunked(chunksize=10000):
         lengths.append(len(chunk))
     assert lengths == [10000, 10000, 3040]
-    
+
+def test_df():
+    gdf = aseg_gdf2.read(dset('3bcfc711', 'GA1286_Waveforms'))
+    assert len(gdf.df()) == 23040

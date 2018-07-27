@@ -152,15 +152,16 @@ class GDF2(object):
         print(self._read_func)
         print(self._read_kws)
 
-    def chunks(self, chunksize=500000, **kwargs):
+    def df(self, **kwargs):
         kws = dict(**self._read_kws)
         kws.update(kwargs)
-        kws['chunksize'] = chunksize
-        print(kws)
         return self._read_func(self.dat_filename, **kws)
 
+    def df_chunked(self, chunksize=200000, **kwargs):
+        return self.df(chunksize=chunksize, **kwargs)
+
     def iterrows(self, *args, **kwargs):
-        for chunk in self.chunks(*args, **kwargs):
+        for chunk in self.df_chunked(*args, **kwargs):
             for row in chunk.itertuples():
                 yield row._asdict()
 
