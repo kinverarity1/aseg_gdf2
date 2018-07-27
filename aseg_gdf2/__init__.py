@@ -30,7 +30,7 @@ def read(filename):
 class GDF2(object):
     def __init__(self, dfn_filename, **kwargs):
         self.parse_dfn(dfn_filename)
-        self.read_dat(self.find_dat_files())
+        self.parse_dat(self.find_dat_files())
 
     def parse_dfn(self, dfn_filename, join_null_data_rts=True, **kwargs):
         self.record_types = {}
@@ -97,16 +97,17 @@ class GDF2(object):
                                 f['comment'] = chunk
                         else:
                             f['format'] = remaining
-                        m = re.match('([0-9]*)([a-zA-Z]{1})([0-9]+)', f['format'])
+                        m = re.match('([0-9]*)([a-zA-Z]{1})([0-9]+).*', f['format'])
                         if m:
                             n = m.group(1)
                             try:
                                 n = int(n)
                             except ValueError:
                                 n = 1
-                            f['shape'] = (n, )
+                            f['cols'] = n
+                            f['width'] = int(m.group(3))
                         else:
-                            f['shape'] = (1, )
+                            logger.critical('No field width found in format code {}'.format(f['format']))
                         
                         logger.info('line {}: adding field {} to record type RT={}'.format(i, str(f), rt))
                         self.record_types[rt]['fields'].append(f)
@@ -121,22 +122,31 @@ class GDF2(object):
         logger.error('No data file located.')
         return ''
 
-    def read_dat(self, dat_filename, method='delimited'):
+    def parse_dat(self, dat_filename, method='delimited'):
         self.dat_filename = dat_filename
-        self.dask_dfs = {}
-        if method == 'delimited':
-            self.dask_dfs[self.dat_filename] = dd.read_table(self.dat_filename, delimiter='\s+')
-
-    @property
-    def data(self):
-        return {
-            '': {key: self.dask_dfs[self.dat_filename][key].values for key in self.dask_dfs[self.dat_filename].columns}
+        self.read_fwf_kws = {
+            'names': [f['name'] for f in self.record_types['']['fields']],
+            'widths': [f['width'] for f in self.record_types['']['fields']],
+            'na_filter': False,
+            'header': None,
         }
 
-    @property
-    def null_fields(self):
-        return tuple([f['name'] for f in self.record_types['']['fields']])
+    def data_chunked(self, chunksize=10000, **kwargs):
+        kws = dict(**self.read_fwf_kws)
+        kws.update(kwargs)
+        kws['chunksize'] = chunksize
+        return pd.read_fwf(self.dat_filename, **kws)
 
+    # def label_null_data(self):
+    #     for i, field in enumerate(self.record_types['']['fields']):
+    #         s = sum([f['shape'][0] for f in self.record_types['']['fields'][:i]])
+    #         field_data = self.df.iloc[:, s: s + field['shape'][0]].copy()
+    #         if field_data.shape[1] == 1:
+    #             data = field_data.iloc[:, 0].values
+    #         else:
+    #             data = field_data.values
+    #         self.data[field['name']] = data
+    
 
 
 class DAT(object):
