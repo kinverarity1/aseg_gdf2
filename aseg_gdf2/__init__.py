@@ -149,8 +149,6 @@ class GDF2(object):
             self._read_kws.update({
                 'delimiter': '\s+',
             })
-        print(self._read_func)
-        print(self._read_kws)
 
     def df(self, **kwargs):
         kws = dict(**self._read_kws)
