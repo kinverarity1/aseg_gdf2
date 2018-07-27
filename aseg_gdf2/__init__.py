@@ -29,8 +29,14 @@ def read(filename):
 
 class GDF2(object):
     def __init__(self, dfn_filename):
+        self.parse_dfn(dfn_filename)
+        self.dat_filename = self.find_dat_files()
+        print(self.dat_filename)
+
+    def parse_dfn(self, dfn_filename):
         self.record_types = {}
         with open(dfn_filename, 'r') as f:
+            self.dfn_filename = dfn_filename
             for i, line in enumerate(f):
                 if not line.startswith('DEFN'):
                     logger.warning('line {} does not begin with DEFN: {}'.format(i, line))
@@ -104,6 +110,14 @@ class GDF2(object):
                         self.record_types[rt]['fields'].append(f)
                         if f['name'] == 'RT':
                             self.record_types[rt]['format'] = f['format']
+
+    def find_dat_files(self):
+        for ext in ('dat', 'DAT'):
+            filename = self.dfn_filename[:-3] + ext
+            if os.path.isfile(filename):
+                return filename
+        logger.error('No data file located.')
+        return ''
 
     @property
     def null_fields(self):

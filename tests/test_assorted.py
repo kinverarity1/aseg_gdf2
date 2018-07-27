@@ -21,3 +21,7 @@ def test_read_no_ext():
 def test_read_incorrect():
     with pytest.raises(OSError):
         gdf = aseg_gdf2.read(here('aseg_examples', 'Example_AeroMag_MuppetTown_2009.data'))
+
+def test_find_dat_file():
+    gdf = aseg_gdf2.read(here('aseg_examples', 'Example_AeroMag_MuppetTown_2009'))
+    assert gdf.dat_filename.lower().endswith('example_aeromag_muppettown_2009.dat')
