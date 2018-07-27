@@ -28,12 +28,11 @@ def read(filename):
 
 
 class GDF2(object):
-    def __init__(self, dfn_filename):
+    def __init__(self, dfn_filename, **kwargs):
         self.parse_dfn(dfn_filename)
-        self.dat_filename = self.find_dat_files()
-        print(self.dat_filename)
+        self.read_dat(self.find_dat_files())
 
-    def parse_dfn(self, dfn_filename):
+    def parse_dfn(self, dfn_filename, join_null_data_rts=True, **kwargs):
         self.record_types = {}
         with open(dfn_filename, 'r') as f:
             self.dfn_filename = dfn_filename
@@ -53,6 +52,9 @@ class GDF2(object):
                     m = re.search('RT=(\w*)', line)
                     if m:
                         rt = m.group(1)
+                        if join_null_data_rts:
+                            if rt == 'DATA':
+                                rt = ''
                         if not rt in self.record_types:
                             logger.info('line {}: added record type RT={}'.format(i, rt))
                             self.record_types[rt] = {'fields': [], 'format': None}
@@ -118,6 +120,18 @@ class GDF2(object):
                 return filename
         logger.error('No data file located.')
         return ''
+
+    def read_dat(self, dat_filename, method='delimited'):
+        self.dat_filename = dat_filename
+        self.dask_dfs = {}
+        if method == 'delimited':
+            self.dask_dfs[self.dat_filename] = dd.read_table(self.dat_filename, delimiter='\s+')
+
+    @property
+    def data(self):
+        return {
+            '': {key: self.dask_dfs[self.dat_filename][key].values for key in self.dask_dfs[self.dat_filename].columns}
+        }
 
     @property
     def null_fields(self):
