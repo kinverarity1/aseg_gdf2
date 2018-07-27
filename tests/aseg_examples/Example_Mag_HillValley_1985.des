@@ -1,0 +1,98 @@
+COMM# For the final version of ASEG GDF2 data please delete this and 
+COMM# the following hash-tagged lines from this file.
+COMM#
+COMM# Please use one of the following file naming conventions:
+COMM#
+COMM#
+COMM# GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# or if the data was acquired for an exploration/mining company
+COMM#
+COMM# ELXXXX_GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# where EL stands for Exploration Lease. Similarly ML can be used for Mining Lease
+COMM# and PEL for Petroleum Exploration Lease etc.
+COMM#
+COMM# for example:
+COMM#		Mag_HillValley_1985.des
+COMM#		Mag_HillValley_1985.dat
+COMM#		Mag_HillValley_1985.dfn
+COMM#		Mag_HillValley_1985.met
+COMM#
+COMM# 		EL9999_Mag_HillValley_1985.des
+COMM#		EL9999_Mag_HillValley_1985.dat
+COMM#		EL9999_Mag_HillValley_1985.dfn
+COMM#		EL9999_Mag_HillValley_1985.met
+COMM#
+COMM#	 	EL6666-9999_Mag_HillValley_1985.des
+COMM#		EL6666-9999_Mag_HillValley_1985.dat
+COMM#		EL6666-9999_Mag_HillValley_1985.dfn
+COMM#		EL6666-9999_Mag_HillValley_1985.met
+COMM ************************************************
+COMM *****       LOCATED MAGNETIC DATA          *****
+COMM *****           HILL VALLEY                *****
+COMM ************************************************
+COMM  
+COMM Dr E Brown Consultancy
+COMM Copyright - Dr E Brown Consultancy 1985
+COMM
+COMM AIRBORNE MAGNETIC & SPECTROMETRIC SURVEY
+COMM
+COMM HILL VALLEY
+COMM AIRBORNE SURVEY SPECIFICATIONS
+COMM ------------------------------
+COMM Date of Survey                                June 1985
+COMM Contractor                            McFly Enterprises
+COMM Aircraft                               DeLorean, DMC-12
+COMM Magnetometer             Geometrics G822A Cesium Vapour
+COMM Recording Interval                           0.1 second
+COMM -                                         (approx. 7 m)
+COMM Terrain Clearance                       70 metres (MTC)
+COMM Line Spacing                          250m Flight Lines
+COMM -                                       2500m Tie Lines
+COMM Line Direction                         E-W Flight Lines
+COMM -                                         N-S Tie Lines
+COMM Navigation                      Ashtec G12 GPS Receiver
+COMM Acquisition System           Geo Instruments Model 2000
+COMM Differentially corrected real time using Omnistar
+COMM 
+COMM LINE NUMBERS
+COMM ------------
+COMM Traverses                                     1000-1699
+COMM Ties                                          9000-9900
+COMM 
+COMM DATA PROCESSING
+COMM ---------------
+COMM Processing By                    Dr E Brown Consultancy
+COMM Magnetics -
+COMM System Parallax Removed
+COMM Diurnal Corrections Applied
+COMM Average survey base station value of 58594.82 nT added to data
+COMM IGRF(2000) Removed
+COMM Data Tie-line & Micro-levelled
+COMM 
+COMM Digital Elevation - 
+COMM DTM = GPSalt - Radalt
+COMM Data Tie-line & Micro-levelled
+COMM DTM corrected to the Australian Height Datum to create DEM
+COMM Located Data Format                              ASEG GDF2
+COMM (reformatted by Dr E Brown Consultancy, June 2015)
+COMM -
+COMM Line                         is Line Number
+COMM Date                         is Date, YYMMDD
+COMM Fiducial                     is Fiducial Number
+COMM Time                         is Local Time, hours
+COMM Easting                      is Easting, GDA94, MGA55, metres
+COMM Northing                     is Northing, GDA94, MGA55, metres
+COMM East_AGD66                   is Easting, AGD66, TMAMG55, metres
+COMM North_AGD66                  is Northing, AGD66, TMAMG55, metres
+COMM GPSalt                       is GPS Altitude, WGS84, metres
+COMM Rawmag                       is Raw Magnetics, nT
+COMM IGRFmag                      is Magnetics with diurnal & IGRF corrections only, nT
+COMM Finalmag                     is Corrected, Tie-line & Micro-levelled Total Magnetic Intensity, nT
+COMM Diurnal                      is Base Station Mag, nT
+COMM Fluxx                        is Fluxx, nT
+COMM Fluxy                        is Fluxy, nT
+COMM Fluxz                        is Fluxz, nT
+COMM Radalt                       is Radar Altimeter (Height above ground), metres
+COMM Finaldem                     is Final Levelled DEM, metres

@@ -1,0 +1,119 @@
+COMM# For the final version of ASEG GDF2 data please delete this and 
+COMM# the following hash-tagged lines from this file.
+COMM#
+COMM# Please use one of the following file naming conventions:
+COMM#
+COMM#
+COMM# GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# or if the data was acquired for an exploration/mining company
+COMM#
+COMM# ELXXXX_GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# where EL stands for Exploration Lease. Similarly ML can be used for Mining Lease
+COMM# and PEL for Petroleum Exploration Lease etc.
+COMM#
+COMM# for example:
+COMM#		Rad256_SeasameSt_2008.des
+COMM#		Rad256_SeasameSt_2008.dat
+COMM#		Rad256_SeasameSt_2008.dfn
+COMM#		Rad256_SeasameSt_2008.met
+COMM#
+COMM# 		EL9999_Rad256_SeasameSt_2008.des
+COMM#		EL9999_Rad256_SeasameSt_2008.dat
+COMM#		EL9999_Rad256_SeasameSt_2008.dfn
+COMM#		EL9999_Rad256_SeasameSt_2008.met
+COMM#
+COMM#	 	EL6666-9999_Rad256_SeasameSt_2008.des
+COMM#		EL6666-9999_Rad256_SeasameSt_2008.dat
+COMM#		EL6666-9999_Rad256_SeasameSt_2008.dfn
+COMM#		EL6666-9999_Rad256_SeasameSt_2008.met
+COMM 
+COMM Big Bird Geosciences Pty. Ltd.
+COMM -----------------------------
+COMM  
+COMM LOCATED DATA 
+COMM -------------
+COMM Area		  :  Seasame St
+COMM Company Flown by	  :  Elmo Aviation Pty. Ltd.
+COMM Company Flown for    :  Seasame Street Minerals
+COMM Company Processed    :  Big Bird Geosciences Pty. Ltd.
+COMM 
+COMM AIRBORNE SURVEY EQUIPMENT:
+COMM -------------------------
+COMM 
+COMM Aircraft                         : Bell Jet Ranger
+COMM Magnetometer                     : Geometrics G822 Cesium  Vapour
+COMM Magnetometer Resolution          : 0.001 nT
+COMM Magnetometer Compensation        : Picodas
+COMM Magnetometer Sample Interval     : 20 Hz, Approx 1.8 metres
+COMM Data Acquisition                 : GeoOZ Model 2007
+COMM Spectrometer                     : Radiation Solutions RS 500
+COMM Crystal Size                     : 16 lt downward array
+COMM Spectrometer Sample Interval     : 1.0 Seconds (approx 35 metres)
+COMM GPS Navigation System            : Novatel 951R GPS Receiver
+COMM 
+COMM 
+COMM 
+COMM 
+COMM AIRBORNE SURVEY SPECIFICATIONS
+COMM 
+COMM Flight Line Direction            :    090 - 270  degrees
+COMM Flight Line Separation           :      100 & 200  metres
+COMM Tie Line Direction               :    000 - 180  degrees
+COMM Tie Line Separation              :     1000  & 2000 metres
+COMM Terrain Clearance                :      35 metres (MTC)
+COMM 
+COMM 
+COMM Survey flown                     :             January 2008
+COMM 
+COMM 
+COMM Flight path calculated from differentially
+COMM corrected GPS Data using a Novatel 951R GPS Receiver.
+COMM 
+COMM 
+COMM Grid notation refers to GDA/MGA Zone  55
+COMM 
+COMM         
+COMM MAGNETIC DATA CORRECTIONS:
+COMM ------------------------- 
+COMM Diurnal variations removed
+COMM IGRF(2005) updated to 2008.1 removed
+COMM Average survey base station value added to datum
+COMM  
+COMM RADIOMETRIC CORRECTIONS AND COEFFICIENTS:
+COMM ----------------------------------------
+COMM Data has been corrected for aircraft and cosmic backgrounds.
+COMM Height corrected to a constant datum of 35 metres,
+COMM minimum height of 20 and a maximum of 300 metres.
+COMM Data has also been corrected for radon using the method described by Minty
+COMM and corrected for channel interaction.
+COMM 
+COMM                   Tot.Count    Potassium   Uranium     Thorium
+COMM Arcft Bkg            78            12          3         0
+COMM Cosmic Bkg          0.986        0.0514      0.041       0.0549
+COMM Height Attn        0.007434    0.009432     0.008428    0.007510  
+COMM 
+COMM 
+COMM STRIPPING RATIOS:
+COMM ----------------
+COMM   Alpha = 0.276,  Beta = 0.418, Gamma = 0.759, 
+COMM   a = 0.048,  b = 0.003,  g = 0.001
+COMM  Field Name                    Format         Units     Null Value     
+COMM  
+COMM  
+COMM  Line number                  a8
+COMM  Flight number                i4
+COMM  Flight date                  a8
+COMM  fiducial                      f10.1                         -999999.0 
+COMM  east_mga                      f10.2          METRES         -99999.00 
+COMM  north_mga                     f11.2          METRES         -99999.00 
+COMM  wgs84_lat                     f12.7          degrees        -99.000000
+COMM  wgs84_long                    f13.7          degrees        -999.00000
+COMM  rad_alt                       f8.2           METRES         -999.00   
+COMM  temp_air_deg_c                f5.1           DEG            -99.0     
+COMM  baro_pressure                 f8.2           hPa            -999.0    
+COMM  gps_height                    f8.2           METRES         -999.00   
+COMM  live_time                     f7.0           MSEC           -9999     
+COMM  cosmicd_cps                   f5.0           CPS            -999      
+COMM  raw 256 channel data       256f5.0           CPS            -9

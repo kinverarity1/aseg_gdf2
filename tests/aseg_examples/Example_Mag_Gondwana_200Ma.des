@@ -1,0 +1,95 @@
+COMM# For the final version of ASEG GDF2 data please delete this and 
+COMM# the following hash-tagged lines from this file.
+COMM#
+COMM# Please use one of the following file naming conventions:
+COMM#
+COMM#
+COMM# GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# or if the data was acquired for an exploration/mining company
+COMM#
+COMM# ELXXXX_GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# where EL stands for Exploration Lease. Similarly ML can be used for Mining Lease
+COMM# and PEL for Petroleum Exploration Lease etc.
+COMM#
+COMM# for example:
+COMM#		Mag_Gondwana_200Ma.des
+COMM#		Mag_Gondwana_200Ma.dat
+COMM#		Mag_Gondwana_200Ma.dfn
+COMM#		Mag_Gondwana_200Ma.met
+COMM#
+COMM# 		EL9999_Mag_Gondwana_200Ma.des
+COMM#		EL9999_Mag_Gondwana_200Ma.dat
+COMM#		EL9999_Mag_Gondwana_200Ma.dfn
+COMM#		EL9999_Mag_Gondwana_200Ma.met
+COMM#
+COMM#	 	EL6666-9999_Mag_Gondwana_200Ma.des
+COMM#		EL6666-9999_Mag_Gondwana_200Ma.dat
+COMM#		EL6666-9999_Mag_Gondwana_200Ma.dfn
+COMM#		EL6666-9999_Mag_Gondwana_200Ma.met
+COMM **************************************************
+COMM *****         LOCATED MAGNETIC DATA          *****
+COMM **************************************************
+COMM 
+COMM PalaeoMag Ltd
+COMM 
+COMM AIRBORNE MAGNETIC & SPECTROMETRIC SURVEY
+COMM 
+COMM PROJECT AREA - GONDAWANA
+COMM
+COMM AIRBORNE SURVEY SPECIFICATIONS
+COMM ------------------------------
+COMM Date of Survey                       	      200 Ma
+COMM Contractor                                PalaeoMag Ltd.
+COMM Aircraft              Rockwell Shrike Commander, VH-FGS
+COMM Aircraft              Rockwell Shrike Commander, VH-MEH
+COMM Aircraft              Rockwell Shrike Commander, VH-UPK
+COMM Magnetometer                 Scintrex Cesium Vapour CS2
+COMM Recording Interval                           0.1 second
+COMM                                            (approx. 7 m)
+COMM Terrain Clearance                             60 metres
+COMM Area A3:
+COMM Line Spacing                          400m Flight Lines
+COMM                                         2500m Tie Lines
+COMM Line Direction                         E-W Flight Lines
+COMM                                           N-S Tie Lines
+COMM Area A4:
+COMM Line Spacing                          250m Flight Lines
+COMM                                         2500m Tie Lines
+COMM Line Direction                         E-W Flight Lines
+COMM                                           N-S Tie Lines
+COMM Navigation              Using GPS satellite positioning
+COMM                           Differentially Post Processed
+COMM Data acquisition    11 Channel RMS GR33A Chart Recorder
+COMM                 Picodas 1000 Digital Acquisition System
+COMM          
+COMM DATA PROCESSING
+COMM ---------------
+COMM Processing By         	              Silurians Ltd.
+COMM Data coordinated with post processing AMG coordinates
+COMM Fluxgate, compensation & diurnal corrections applied
+COMM Diurnal base value 55200 nanoTeslas
+COMM IGRF removed (1990 Model) - base value 56500 nanoTeslas
+COMM System Parallax removed
+COMM Tie-Line & Micro-levelling applied
+COMM
+COMM Located Data Format                           ASEG GDF2
+COMM
+COMM Line             is Line Number
+COMM Flight           is Flight Number
+COMM Date             is Date (YYMMDD)
+COMM Fiducial         is Fiducial
+COMM Time             is Time, seconds
+COMM Radalt           is Radar Altimeter (Height above ground), metres
+COMM CompMag          is Compensated Magnetics, nanoTeslas
+COMM IGRFMag          is Compensated Magnetics with IGRF Removed, nanoTeslas
+COMM Diurnal          is Base station TMI reading, as applied to field data, nanoTeslas
+COMM Mag_Final        is Final Total Magnetic Intensity, nanoTeslas
+COMM Longitude        is Longitude, AGD84 (not WGS84), degrees
+COMM Latitude         is Latitude, AGD84 (not WGS84), degrees
+COMM Easting          is AMG easting, AGD66, Zone 54, metres
+COMM Northing         is AMG northing, AGD66, Zone 54, metres
+COMM Fluxx            is Fluxgate X
+COMM Fluxy            is Fluxgate Y
+COMM Fluxz            is Fluxgate Z

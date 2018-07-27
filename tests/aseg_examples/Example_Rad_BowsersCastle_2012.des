@@ -1,0 +1,137 @@
+COMM# For the final version of ASEG GDF2 data please delete this and 
+COMM# the following hash-tagged lines from this file.
+COMM#
+COMM# Please use one of the following file naming conventions:
+COMM#
+COMM#
+COMM# GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# or if the data was acquired for an exploration/mining company
+COMM#
+COMM# ELXXXX_GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# where EL stands for Exploration Lease. Similarly ML can be used for Mining Lease
+COMM# and PEL for Petroleum Exploration Lease etc.
+COMM#
+COMM# for example:
+COMM#		Rad_BowsersCastle_2012.des
+COMM#		Rad_BowsersCastle_2012.dat
+COMM#		Rad_BowsersCastle_2012.dfn
+COMM#		Rad_BowsersCastle_2012.met
+COMM#
+COMM# 		EL9999_Rad_BowsersCastle_2012.des
+COMM#		EL9999_Rad_BowsersCastle_2012.dat
+COMM#		EL9999_Rad_BowsersCastle_2012.dfn
+COMM#		EL9999_Rad_BowsersCastle_2012.met
+COMM#
+COMM#	 	EL6666-9999_Rad_BowsersCastle_2012.des
+COMM#		EL6666-9999_Rad_BowsersCastle_2012.dat
+COMM#		EL6666-9999_Rad_BowsersCastle_2012.dfn
+COMM#		EL6666-9999_Rad_BowsersCastle_2012.met
+COMM GENERAL                       
+COMM 
+COMM Project                       9999
+COMM Survey area                   Bowsers Castle
+COMM Located data type             1 Second FINAL RADIOMETRIC Data
+COMM 
+COMM Surveyed by                   MARIO CARTS SURVEYS PTY. LTD.
+COMM Job number                    2451
+COMM Creation date                 30 Febuary 2012
+COMM 
+COMM SURVEY SPECIFICATIONS         
+COMM 
+COMM Survey flown                  June to November 2011
+COMM Traverse line spacing         250 metres
+COMM Traverse line direction       090-270 degrees
+COMM Tie line spacing              2500 metres
+COMM Tie line direction            180-360 degrees
+COMM 
+COMM Survey height                 60 metres
+COMM 
+COMM LOCATED DATA FORMAT           
+COMM 
+COMM Variable                      Units          Undefined      From  To    Format    
+COMM 
+COMM Project number                               9999           1     5     I5        
+COMM Line number                                  9999999        6     13    I8        
+COMM Easting (MGA56)               metres         9999999.99     14    24    F11.2     
+COMM Northing (MGA56)              metres         9999999.99     25    35    F11.2     
+COMM Fiducial                                     99999999       36    44    F9.0      
+COMM Flight number                                999            45    49    I5        
+COMM Date (YYYYMMDD)                              99999999       50    58    I9        
+COMM Longitude (GDA94)             degrees        999.999999     59    69    F11.6     
+COMM Latitude (GDA94)              degrees        999.999999     70    80    F11.6     
+COMM Bearing                       degrees        999            81    84    F4.0      
+COMM Radar altimeter               metres         9999.9         85    91    F7.1      
+COMM Pressure                      millibars      9999.9         92    98    F7.1      
+COMM Temperature                   degrees C      99.9           99    103   F5.1      
+COMM Final dose rate under 300     nGy/hr         999.999        104   111   F8.3      
+COMM Final potassium under 300     %              999.999        112   119   F8.3      
+COMM Final uranium under 300       ppm            999.999        120   127   F8.3      
+COMM Final thorium  under 300      ppm            999.999        128   135   F8.3      
+COMM Final dose rate               nGy/hr         999.999        136   143   F8.3      
+COMM Final potassium               %              999.999        144   151   F8.3      
+COMM Final uranium                 ppm            999.999        152   159   F8.3      
+COMM Final thorium                 ppm            999.999        160   167   F8.3      
+COMM Final dose rate under 300 uns nGy/hr         999.999        168   175   F8.3      
+COMM Final potassium under 300 uns %              999.999        176   183   F8.3      
+COMM Final uranium under 300 unsmo ppm            999.999        184   191   F8.3      
+COMM Final thorium under 300 unsmo ppm            999.999        192   199   F8.3      
+COMM Final dose rate unsmoothed    nGy/hr         999.999        200   207   F8.3      
+COMM Final potassium unsmoothed    %              999.999        208   215   F8.3      
+COMM Final uranium unsmoothed      ppm            999.999        216   223   F8.3      
+COMM Final thorium unsmoothed      ppm            999.999        224   231   F8.3      
+COMM 
+COMM DATA PROCESSING
+COMM by Luigi Speedy Processing Ltd.              
+COMM 
+COMM COORDINATE DATA               
+COMM All lines are scissored to the following rules:                            
+COMM   1) A 'smooth' edge outside the area boundary.                            
+COMM   2) Maximum line overlap of 0 fiducials within                            
+COMM      the area boundary.                                                    
+COMM 
+COMM The local projection is a UTM projection based on the                      
+COMM GDA94 spheroid with a central meridian of 153 degrees East degrees.        
+COMM System parallax of 2.5 fiducial has been removed.                          
+COMM 
+COMM RADIOMETRIC DATA              
+COMM 
+COMM Raw channel data provided has been energy calibrated                       
+COMM NASVD has been applied to channel data prior to windowing                  
+COMM System parallax of 0.0 fiducial has been removed.                          
+COMM Height attenuated to 60m AGL                                               
+COMM Airborne radon has been removed                                            
+COMM 
+COMM AIRCRAFT BACKGROUND                                UNITS
+COMM Total Count                          135.09          cps
+COMM Potassium                             27.06          cps
+COMM Uranium                                4.48          cps
+COMM Thorium                                1.52          cps
+COMM COSMIC STRIPPING RATIOS       
+COMM Total Count                        0.824114             
+COMM Potassium                          0.045545             
+COMM Uranium                            0.043567             
+COMM Thorium                            0.042766             
+COMM COMPTON STRIPPING RATIOS      
+COMM alpha                                0.2659             
+COMM beta                                 0.4129             
+COMM gamma                                0.7579             
+COMM a                                    0.0576             
+COMM HEIGHT ATTENUATION COEFFICIENT
+COMM Total Count 			0.006927    per metre
+COMM Potassium				0.011180    per metre        
+COMM Uranium                            0.008403    per metre
+COMM Thorium                            0.006721    per metre
+COMM 
+COMM SENSITITY CONSTANTS
+COMM Total Count - nGy/hr                  33.14          cps
+COMM Potassium - 1%                       252.20          cps
+COMM Uranium - 1ppm                        36.70          cps
+COMM Thorium - 1ppm                        10.15          cps
+COMM WINDOW ENERGY LEVELS             Low Energy High Energy
+COMM Total Count                           410.0      2810.0          keV
+COMM Potassium                            1370.0      1570.0          keV
+COMM Uranium                              1660.0      1860.0          keV
+COMM Thorium                              2410.0      2810.0          keV
+

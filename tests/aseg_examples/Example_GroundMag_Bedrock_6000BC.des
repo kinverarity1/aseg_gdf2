@@ -1,0 +1,78 @@
+COMM# For the final version of ASEG GDF2 data please delete this and 
+COMM# the following hash-tagged lines from this file.
+COMM#
+COMM# Please use one of the following file naming conventions:
+COMM#
+COMM#
+COMM# GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# or if the data was acquired for an exploration/mining company
+COMM#
+COMM# ELXXXX_GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# where EL stands for Exploration Lease. Similarly ML can be used for Mining Lease
+COMM# and PEL for Petroleum Exploration Lease etc.
+COMM#
+COMM# for example:
+COMM#		GroundMag_Bedrock_6000BC.des
+COMM#		GroundMag_Bedrock_6000BC.dat
+COMM#		GroundMag_Bedrock_6000BC.dfn
+COMM#		GroundMag_Bedrock_6000BC.met
+COMM#
+COMM# 		EL9999_GroundMag_Bedrock_6000BC.des
+COMM#		EL9999_GroundMag_Bedrock_6000BC.dat
+COMM#		EL9999_GroundMag_Bedrock_6000BC.dfn
+COMM#		EL9999_GroundMag_Bedrock_6000BC.met
+COMM#
+COMM#	 	EL6666-9999_Mag_Bedrock_6000BC.des
+COMM#		EL6666-9999_Mag_Bedrock_6000BC.dat
+COMM#		EL6666-9999_Mag_Bedrock_6000BC.dfn
+COMM#		EL6666-9999_Mag_Bedrock_6000BC.met
+COMM **************************************************
+COMM *****         LOCATED MAGNETIC DATA          *****
+COMM **************************************************
+COMM 
+COMM CLIENT: Bureau of Brummelstones
+COMM 
+COMM GROUND MAGNETIC SURVEY
+COMM
+COMM SURVEY PROJECT NAME: Bedrock
+COMM
+COMM SURVEY SPECIFICATIONS
+COMM ------------------------------
+COMM Date of Survey                       	      6000BC
+COMM Contractor            		   Barney Rubble Ltd
+COMM Rover Magnetometer   GEM Systems GSMP35 potassium vapor
+COMM Recording Interval                             1 second
+COMM                                            (approx.1 m)
+COMM Base Magnetometer          GEM Systems GSM19 Overhauser
+COMM Base sampling                                 3 seconds
+COMM 
+COMM Terrain Clearance                             ~2 metres
+COMM Line Spacing                                        10m
+COMM Line Direction                                      N-S
+COMM Line kilometers                                   430.3
+COMM
+COMM GPS/Navigation                         NOVATEL OEM Star
+COMM GPS recording interval			    1 second
+COMM GPS accuracy                                      ~1.5m
+COMM
+COMM          
+COMM DATA PROCESSING
+COMM ---------------
+COMM Processing By         	           Barney Rubble Ltd
+COMM Diurnally corrected data with median base value of
+COMM 576676.87nT added to the survey grid. Raw TMI values 
+COMM included in dataset also.
+COMM Non-linear and 3 point low pass filter applied to Mag_final.
+COMM
+COMM Located Data Format ASEG GDF2
+COMM 
+COMM Description of channels that need further details that cant fit into dfn file.                        
+COMM Mag_lock         is boolean. 1 is sensor lock. 0 is sensor unlock.
+COMM Mag_raw          is raw rover magnetometer data. 
+COMM Mag_corr         is diurnally corrected data.
+COMM Mag_final        is Final processed and recommeded data to use.
+COMM num_sats         is number of GPS satellites visible.
+COMM Time             HHMMSS.ss
+

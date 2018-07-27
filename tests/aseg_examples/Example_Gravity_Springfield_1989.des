@@ -1,0 +1,71 @@
+COMM# For the final version of ASEG GDF2 data please delete this and 
+COMM# the following hash-tagged lines from this file.
+COMM#
+COMM# Please use one of the following file naming conventions:
+COMM#
+COMM#
+COMM# GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# or if the data was acquired for an exploration/mining company
+COMM#
+COMM# ELXXXX_GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# where EL stands for Exploration Lease. Similarly ML can be used for Mining Lease
+COMM# and PEL for Petroleum Exploration Lease etc.
+COMM#
+COMM# for example:
+COMM#		Gravity_Springfield_1989.des
+COMM#		Gravity_Springfield_1989.dat
+COMM#		Gravity_Springfield_1989.dfn
+COMM#		Gravity_Springfield_1989.met
+COMM#
+COMM# 		EL9999_Gravity_Springfield_1989.des
+COMM#		EL9999_Gravity_Springfield_1989.dat
+COMM#		EL9999_Gravity_Springfield_1989.dfn
+COMM#		EL9999_Gravity_Springfield_1989.met
+COMM#
+COMM#	 	EL6666-9999_Gravity_Springfield_1989.des
+COMM#		EL6666-9999_Gravity_Springfield_1989.dat
+COMM#		EL6666-9999_Gravity_Springfield_1989.dfn
+COMM#		EL6666-9999_Gravity_Springfield_1989a.met
+COMM Springfield Project
+COMM Client: Simpsons Mining Ltd
+COMM Surveyor: Lisa Simpson Inc.
+COMM Date: 25-Apr-2000
+COMM Project: Springfield
+COMM Meter: LaCoste & Romberg Model "G" Gravity Meter
+COMM Datum: Geodetic Datum of Australia 94. GDA94
+COMM Gravity Units: mGals
+COMM 
+COMM ---------------------------------------------
+COMM General Grid Based Gravity Survey Procedures
+COMM ---------------------------------------------
+COMM Subsequent to assessment of access, terrain & traversing conditions, a survey & gravity base location is chosen to facilitate ease of data collection within constraints of general operation specs (GA).
+COMM 
+COMM A survey mark is placed & static dual frequency GPS data is collected. This is either used for ties to existing survey control or submitted for external processing by either AUSPOS (GA) or TRX (Trimble).
+COMM 
+COMM The resultant coordinates are then used as survey seeding for control in subsequent station point pickups throughout the gravity survey using a pair of dual frequency GPS/Glonass receivers per RTK methods.
+COMM 
+COMM ---------------------------------------------
+COMM General Gravity Data Collection
+COMM ---------------------------------------------
+COMM Gravity is observed by collecting instrument readings with a LaCoste & Romberg G model meter.
+COMM 
+COMM Daily procedures commence with a check/adjust of the reading line at a repeat station, normally the local base nearest station to the access, camp or GPS Base receiver.
+COMM 
+COMM Instrument readings are collected & logged manually via GIS input into the GPS Data Logger (Trimble TSC2) in conjunction with station positional data.
+COMM 
+COMM Subsequent readings are collected at stations on traverses looped & tied on repeat stations commencing with the local base.
+COMM 
+COMM Local Gravity Bases are tied out to the AFGN Network.
+COMM 
+COMM ---------------------------------------------
+COMM Gravity Processing
+COMM ---------------------------------------------
+COMM Collected survey & gravity data is processed in Trimble TBC.
+COMM 
+COMM The data is then reduced to observed gravity by Strider Gravred.
+COMM 
+COMM The reduced gravity is then Bouguer Reduced per Strider Bouguer.
+COMM 
+COMM Daily data is reviewed to check quality & compliance to general GA specs. 

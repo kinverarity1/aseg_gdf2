@@ -1,0 +1,74 @@
+COMM# For the final version of ASEG GDF2 data please delete this and 
+COMM# the following hash-tagged lines from this file.
+COMM#
+COMM# Please use one of the following file naming conventions:
+COMM#
+COMM#
+COMM# GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# or if the data was acquired for an exploration/mining company
+COMM#
+COMM# ELXXXX_GeophysicalTechnique_ProjectName_Year.xxx
+COMM#
+COMM# where EL stands for Exploration Lease. Similarly ML can be used for Mining Lease
+COMM# and PEL for Petroleum Exploration Lease etc.
+COMM#
+COMM# for example:
+COMM#		GroundMag_HillValley_1985.des
+COMM#		GroundMag_HillValley_1985.dat
+COMM#		GroundMag_HillValley_1985.dfn
+COMM#		GroundMag_HillValley_1985.met
+COMM#
+COMM# 		EL9999_GroundMag_HillValley_1985.des
+COMM#		EL9999_GroundMag_HillValley_1985.dat
+COMM#		EL9999_GroundMag_HillValley_1985.dfn
+COMM#		EL9999_GroundMag_HillValley_1985.met
+COMM#
+COMM#	 	EL6666-9999_Mag_HillValley_1985.des
+COMM#		EL6666-9999_Mag_HillValley_1985.dat
+COMM#		EL6666-9999_Mag_HillValley_1985.dfn
+COMM#		EL6666-9999_Mag_HillValley_1985.met
+COMM LOCATED MAGNETIC DATA
+COMM acquired by McFly Inc.
+COMM 
+COMM CLIENT: Twin Pines Mall.
+COMM SURVEY PROJECT NAME: Hill Valley
+COMM 
+COMM GROUND MAGNETIC SURVEY
+COMM
+COMM SURVEY SPECIFICATIONS
+COMM ------------------------------
+COMM Date of Survey                       	   June 1985
+COMM Rover Magnetometer                 G-858 ceasium vapour
+COMM Recording Interval                             1 second
+COMM                                            (approx.1 m)
+COMM Base Magnetometer               G-856 proton procession
+COMM Base sampling                                 3 seconds
+COMM 
+COMM Terrain Clearance                             ~2 metres
+COMM Line Spacing                                        10m
+COMM Line Direction                                      N-S
+COMM Line kilometers                                    69.4
+COMM
+COMM GPS/Navigation                            Trimble Ag114
+COMM GPS interval				       1 sec
+COMM GPS accuracy                                      ~1.5m
+COMM
+COMM          
+COMM DATA PROCESSING
+COMM ---------------
+COMM Processing By         	         Doc E Brown Consultancy
+COMM Diurnally corrected data with median base value of
+COMM 577752.67nT added to the survey grid. Raw TMI values 
+COMM included in dataset also.
+COMM Non-linear and 3 point low pass filter applied to Mag_final.
+COMM
+COMM Located Data Format ASEG GDF2
+COMM 
+COMM Description of channels that need further details that cant fit into dfn file.                        
+COMM Mag_lock         is boolean. 1 is sensor lock. 0 is sensor unlock.
+COMM Mag_raw          is raw rover magnetometer data.
+COMM Mag_corr         is diurnally corrected data.
+COMM Mag_final        is Final processed and recommeded data to use.
+COMM num_sats         is number of GPS satellites visible.
+COMM Time             HHMMSS.ss
