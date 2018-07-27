@@ -11,7 +11,10 @@ In [1]: import aseg_gdf2
 
 In [2]: gdf = aseg_gdf2.read(r'tests/example_datasets/3bcfc711/GA1286_Waveforms')
 
-In [3]: for row in gdf.iterrows():
+In [3]: gdf.fields()
+Out[3]: ['FLTNUM', 'Rx_Voltage', 'Flight', 'Time', 'Tx_Current']
+
+In [4]]: for row in gdf.iterrows():
    ...:     print(row)
    ...:
 OrderedDict([('Index', 0), ('FLTNUM', 1.0), ('Rx_Voltage', -0.0), ('Flight', 1), ('Time', 0.0052), ('Tx_Current', 0.00176)])
@@ -43,10 +46,10 @@ Out[4]:
 [23040 rows x 5 columns]
 ```
 
-For .dat files that are too big for memory, you can use the ``chunksize=`` keyword argument to specify the number of rows:
+For .dat files that are too big for memory, you can use the ``chunksize=`` keyword argument to specify the number of rows. Normally you could get away with a few hundred thousand, but for the example we'll use something less:
 
 ```python
-In [5]: for chunk in gdf.df_chunked(10000):
+In [5]: for chunk in gdf.df_chunked(chunksize=10000):
     ...:     print('{} length = {}'.format(type(chunk), len(chunk)))
     ...:
 <class 'pandas.core.frame.DataFrame'> length = 10000

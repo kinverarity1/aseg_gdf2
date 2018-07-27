@@ -132,42 +132,41 @@ class GDF2(object):
         return ''
 
     def _parse_dat(self, dat_filename, method='whitespace'):
-        self.dat_filename = dat_filename
-        self.method = method
-        self._read_kws = {
-            'names': [f['name'] for f in self.record_types['']['fields']],
-            'header': None,
+        self._read_dat = {
+            '': {
+                'func': None,
+                'args': [dat_filename, ],
+                'kwargs': {
+                    'names': [f['name'] for f in self.record_types['']['fields']],
+                    'header': None,
+                }
+            }
         }
         if method == 'fixed-widths':
-            self._read_func = pd.read_fwf
-            self._read_kws.update({
+            self._read_dat['']['func'] = pd.read_fwf
+            self._read_dat['']['kwargs'].update({
                 'widths': [f['width'] for f in self.record_types['']['fields']],
                 'na_filter': False,
             })
         elif method == 'whitespace':
-            self._read_func = pd.read_table
-            self._read_kws.update({
+            self._read_dat['']['func'] = pd.read_table
+            self._read_dat['']['kwargs'].update({
                 'delimiter': '\s+',
             })
 
-    def df(self, **kwargs):
-        kws = dict(**self._read_kws)
-        kws.update(kwargs)
-        return self._read_func(self.dat_filename, **kws)
+    def fields(self, record_type=''):
+        return [f['name'] for f in self.record_types[record_type]['fields']]
 
-    def df_chunked(self, chunksize=200000, **kwargs):
-        return self.df(chunksize=chunksize, **kwargs)
+    def df(self, record_type='', **kwargs):
+        rt = self._read_dat[record_type]
+        kws = dict(**rt['kwargs'])
+        kws.update(kwargs)
+        return rt['func'](*rt['args'], **kws)
+
+    def df_chunked(self, record_type='', chunksize=200000, **kwargs):
+        return self.df(record_type=record_type, chunksize=chunksize, **kwargs)
 
     def iterrows(self, *args, **kwargs):
         for chunk in self.df_chunked(*args, **kwargs):
             for row in chunk.itertuples():
                 yield row._asdict()
-
-    def get_fields(self, usecols):
-        kws = dict(**self._read_kws)
-        kws['usecols'] = usecols
-        return self._read_func(self.dat_filename, **kws)
-
-    @property
-    def null_fields(self):
-        return [f['name'] for f in self.record_types['']['fields']]
