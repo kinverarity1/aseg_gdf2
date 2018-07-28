@@ -44,84 +44,85 @@ class GDF2(object):
         self.record_types = {}
         with open(dfn_filename, 'r') as f:
             self.dfn_filename = dfn_filename
-            for i, line in enumerate(f):
-                if not line.startswith('DEFN'):
-                    logger.warning('line {} does not begin with DEFN: {}'.format(i, line))
-                    continue
-                
-                if not ';' in line:
-                    logger.debug('line {}: No field definitions: {}'.format(i, line))
-                    m = re.search('RT=(\w*)', line)
-                    if m:
-                        rt = m.group(1)
+            self.dfn_contents = f.read()
+        for i, line in enumerate(self.dfn_contents.splitlines()):
+            if not line.startswith('DEFN'):
+                logger.warning('line {} does not begin with DEFN: {}'.format(i, line))
+                continue
+            
+            if not ';' in line:
+                logger.debug('line {}: No field definitions: {}'.format(i, line))
+                m = re.search('RT=(\w*)', line)
+                if m:
+                    rt = m.group(1)
+                    logger.info('line {}: added record type RT={}'.format(i, rt))
+                    self.record_types[m.group(1)] = {'fields': [], 'format': None}
+            else:
+                m = re.search('RT=(\w*)', line)
+                if m:
+                    rt = m.group(1)
+                    if join_null_data_rts:
+                        if rt == 'DATA':
+                            rt = ''
+                    if not rt in self.record_types:
                         logger.info('line {}: added record type RT={}'.format(i, rt))
-                        self.record_types[m.group(1)] = {'fields': [], 'format': None}
-                else:
-                    m = re.search('RT=(\w*)', line)
+                        self.record_types[rt] = {'fields': [], 'format': None}
+                
+                fields = line.split(';')[1:]
+                logger.debug('line {}: looping through {} field definitions for RT={}'.format(i, len(fields), rt))
+                for field in fields:
+                    f = {
+                        'name': '',
+                        'format': '',
+                        'unit': '',
+                        'null': None,
+                        'long_name': '',
+                        'comment': '',
+                    }
+                    field = field.strip()
+                    if field == 'END DEFN':
+                        logger.debug('line {}: end of field definition for record type RT={}'.format(i, rt))
+                        continue
+                    f['name'], remaining = field.strip().split(':', 1)
+                    if ':' in remaining:
+                        f['format'], remaining = remaining.strip().split(':', 1)
+                        for chunk in remaining.split(','):
+                            chunk = chunk.strip()
+                            
+                            m = re.search('UNITS? *= *(.*)', chunk)
+                            if m:
+                                f['unit'] = m.group(1)
+                                continue
+                            
+                            m = re.search('NAME *= *(.*)', chunk)
+                            if m:
+                                f['long_name'] = m.group(1)
+                                continue
+                            
+                            m = re.search('NULL *= *(.*)', chunk)
+                            if m:
+                                f['null'] = m.group(1)
+                                continue
+                            
+                            f['comment'] = chunk
+                    else:
+                        f['format'] = remaining
+                    m = re.match('([0-9]*)([a-zA-Z]{1})([0-9]+).*', f['format'])
                     if m:
-                        rt = m.group(1)
-                        if join_null_data_rts:
-                            if rt == 'DATA':
-                                rt = ''
-                        if not rt in self.record_types:
-                            logger.info('line {}: added record type RT={}'.format(i, rt))
-                            self.record_types[rt] = {'fields': [], 'format': None}
+                        n = m.group(1)
+                        try:
+                            n = int(n)
+                        except ValueError:
+                            n = 1
+                        f['cols'] = n
+                        f['width'] = int(m.group(3))
+                    else:
+                        logger.critical('No field width found in format code {}'.format(f['format']))
                     
-                    fields = line.split(';')[1:]
-                    logger.debug('line {}: looping through {} field definitions for RT={}'.format(i, len(fields), rt))
-                    for field in fields:
-                        f = {
-                            'name': '',
-                            'format': '',
-                            'unit': '',
-                            'null': None,
-                            'long_name': '',
-                            'comment': '',
-                        }
-                        field = field.strip()
-                        if field == 'END DEFN':
-                            logger.debug('line {}: end of field definition for record type RT={}'.format(i, rt))
-                            continue
-                        f['name'], remaining = field.strip().split(':', 1)
-                        if ':' in remaining:
-                            f['format'], remaining = remaining.strip().split(':', 1)
-                            for chunk in remaining.split(','):
-                                chunk = chunk.strip()
-                                
-                                m = re.search('UNITS? *= *(.*)', chunk)
-                                if m:
-                                    f['unit'] = m.group(1)
-                                    continue
-                                
-                                m = re.search('NAME *= *(.*)', chunk)
-                                if m:
-                                    f['long_name'] = m.group(1)
-                                    continue
-                                
-                                m = re.search('NULL *= *(.*)', chunk)
-                                if m:
-                                    f['null'] = m.group(1)
-                                    continue
-                                
-                                f['comment'] = chunk
-                        else:
-                            f['format'] = remaining
-                        m = re.match('([0-9]*)([a-zA-Z]{1})([0-9]+).*', f['format'])
-                        if m:
-                            n = m.group(1)
-                            try:
-                                n = int(n)
-                            except ValueError:
-                                n = 1
-                            f['cols'] = n
-                            f['width'] = int(m.group(3))
-                        else:
-                            logger.critical('No field width found in format code {}'.format(f['format']))
-                        
-                        logger.info('line {}: adding field {} to record type RT={}'.format(i, str(f), rt))
-                        self.record_types[rt]['fields'].append(f)
-                        if f['name'] == 'RT':
-                            self.record_types[rt]['format'] = f['format']
+                    logger.info('line {}: adding field {} to record type RT={}'.format(i, str(f), rt))
+                    self.record_types[rt]['fields'].append(f)
+                    if f['name'] == 'RT':
+                        self.record_types[rt]['format'] = f['format']
 
     def _find_dat_files(self):
         for ext in ('dat', 'DAT'):
@@ -137,7 +138,7 @@ class GDF2(object):
                 'func': None,
                 'args': [dat_filename, ],
                 'kwargs': {
-                    'names': [f['name'] for f in self.record_types['']['fields']],
+                    'names': self.column_names(''),
                     'header': None,
                 }
             }
@@ -154,8 +155,36 @@ class GDF2(object):
                 'delimiter': '\s+',
             })
 
-    def fields(self, record_type=''):
+    def field_names(self, record_type=''):
+        '''Return field names from the .dfn file.
+
+        This may not correspond to columns in the data table / pd.DataFrame,
+        because a field may be defined as having multiple values (== "columns")
+        for each record (== "row"). See column_names() for an alternative.
+
+        '''
         return [f['name'] for f in self.record_types[record_type]['fields']]
+
+    def column_names(self, record_type=''):
+        '''Provide a name for each column of the data table / pd.DataFrame
+        object.
+
+        This accounts for the fact that 2D fields are allowed e.g. a 
+        single field "Con" in the .dfn file may account for 30 columns in the 
+        .dat file with a format code of say 30F10.5.
+
+        This method will expand the single field name "Con" into 30 field
+        names, "Con0", "Con1", and so on.
+
+        '''
+        names = []
+        for field in self.record_types[record_type]['fields']:
+            if field['cols'] == 1:
+                names.append(field['name'])
+            else:
+                for i in range(field['cols']):
+                    names.append('{}[{:d}]'.format(field['name'], i))
+        return names
 
     def df(self, record_type='', **kwargs):
         rt = self._read_dat[record_type]
@@ -170,3 +199,23 @@ class GDF2(object):
         for chunk in self.df_chunked(*args, **kwargs):
             for row in chunk.itertuples():
                 yield row._asdict()
+
+    def get_field(self, field_name, record_type='', chunksize=None):
+        column_names = [n for n in self.column_names() if re.match(field_name + '\[[0-9]+\]', n)]
+        # if chunksize is None:
+        return self.df(
+            record_type=record_type, usecols=column_names
+            ).values
+        # else:
+        #     yield self.df_chunked(
+        #         record_type=record_type, usecols=column_names,
+        #         chunksize=chunksize
+        #         ).values
+        # for i, f in enumerate(self.record_types[record_type]['fields']):
+        #     s = sum([f['cols'] for f in self.record_types[record_type]['fields'][:i]])
+        #     if f['name'] == field_name:
+        #         field_data = self.df().iloc[:, s: s + f['cols']].copy()
+        #         if field_data.shape[1] == 1:
+        #             return field_data.iloc[:, 0].values
+        #         else:
+        #             return field_data.values
