@@ -1,0 +1,17 @@
+DEFN   ST=RECD,RT=COMM;RT:A4;COMMENTS:A76
+DEFN 1 ST=RECD,RT=;GA_Project:I10:Geoscience Australia airborne survey project number
+DEFN 2 ST=RECD,RT=;Job_No:I10:SkyTEM Australia Job Number
+DEFN 3 ST=RECD,RT=;Fiducial:F15.2:Fiducial
+DEFN 4 ST=RECD,RT=;DATETIME:F18.10:UNIT=days,Decimal days since midnight December 31st 1899
+DEFN 5 ST=RECD,RT=;LINE:I10:Line number
+DEFN 6 ST=RECD,RT=;Easting:F12.2:NULL=-9999999.99,UNIT=m,Easting (GDA94 MGA Zone 52)
+DEFN 7 ST=RECD,RT=;NORTH:F15.2:NULL=-9999999999.99,UNIT=m,Northing (GDA 94 MGA Zone 52)
+DEFN 8 ST=RECD,RT=;DTM_AHD:F10.2:NULL=-99999.99,Digital terrain model (AUSGeoid09 datum)
+DEFN 9  ST=RECD,RT=;RESI1:F10.3:NULL=-9999.999,Residual of data
+DEFN 10 ST=RECD,RT=;HEIGHT:F10.2:NULL=-99999.99,UNIT=m,Laser altimeter measured height of Tx loop centre above ground
+DEFN 11 ST=RECD,RT=;INVHEI:F10.2:NULL=-99999.99,UNIT=m,Calulated inversion height
+DEFN 12 ST=RECD,RT=;DOI:F10.2:NULL=-99999.99,UNIT=m,Calculated depth of investigation
+DEFN 13 ST=RECD,RT=;Elev:30F12.2:NULL=-9999999.99,UNIT=m,Elevation to the top of each layer
+DEFN 14 ST=RECD,RT=;Con:30F15.5:NULL=-9999999.99999,UNIT=mS/m,Inverted Conductivity for each layer
+DEFN 15 ST=RECD,RT=;Con_doi:30F15.5:NULL=-9999999.99999,UNIT=mS/m, Inverted conductivity for each layer, masked to the depth of investigation
+DEFN 16 ST=RECD,RT=;RUnc:30F12.3:NULL=-999999.999,Relative uncertainty of conductivity layer;END DEFN

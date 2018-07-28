@@ -1,0 +1,366 @@
+COMM JOB NUMBER                                                       10013
+COMM GA PROJECT NUMBER:                                                1288
+COMM SURVEY COMPANY:                                       SKYTEM Australia
+COMM CLIENT:                                           Geoscience Australia
+COMM SURVEY TYPE:                                           25Hz SkyTEM 312
+COMM SURVEY AREA:     Musgrave Region - CSIRO Components Airborne EM Survey
+COMM STATE:                                                              SA
+COMM COUNTRY:                                                     Australia
+COMM SURVEY FLOWN:                           September 2016 to October 2016
+COMM
+COMM DATUM:                                                           GDA94
+COMM PROJECTION:                                                        MGA
+COMM ZONE:                                                               52
+COMM
+COMM SURVEY SPECIFICATIONS
+COMM
+COMM LINE DIRECTION:                                            000/180 deg
+COMM NOMINAL TERRAIN CLEARANCE:                                        40 m
+COMM FINAL LINE KILOMETRES:                                         8818 km
+COMM SAMPLE INTERVAL                                                0.5 sec
+COMM LINE NUMBERING
+COMM
+COMM MAIN SURVEY 2000 m SPACED:                             100100 - 112600
+COMM INFILL AREA 1 500 m SPACED:                            200100 - 202300
+COMM INFILL AREA 2 500 m SPACED:                            300100 - 301900
+COMM INFILL AREA 3 500 m SPACED:                            400100 - 402700
+COMM INFILL AREA 4 250 m SPACED:                            500100 - 506300
+COMM REPEAT LINES:                                          912002 - 912014
+COMM HIGH LEVEL LINES:                                      913001 - 913061
+COMM ADDITIONAL LINES:                                      900001 - 900102
+COMM ----------------------------------------------------------------------
+COMM SURVEY EQUIPMENT                                                      
+COMM INSTRUMENT POSITION SIGN CONVENTION                                   
+COMM THE Z AXIS IS POSITIVE BELOW THE TX LOOP WIRE. POSITIVE X AND Y AXIS  
+COMM ARE IN THE FLIGHT DIRECTION AND TO THE STARBOARD SIDE RESPECTIVELY,   
+COMM FORMING A RIGHT HANDED CORDINATE SYSTEM                               
+COMM REFERENCED TO CENTRE OF THE FRAME                                     
+COMM ----------------------------------------------------------------------
+COMM AIRCRAFT:                                      AS350 B3, VH-HGR/VH-HBB
+COMM                                                                       
+COMM LASER ALTIMETER                                           MDL ACE IM3R
+COMM INCLINOMETERS (Tilt meters)                          BJERRE TECHNOLOGY
+COMM FRAME GPS                                                 NOVATEL OEMV
+COMM BASE GPS                                                  NOVATEL OEMV
+COMM ELECTROMAGNETIC SYSTEM:              275Hz/25Hz Dual Moment SkyTEM 312
+COMM INSTALLATION:                                        Towed Rigid Frame
+COMM                                         Receiver coil in a Rigid Frame
+COMM COIL ORIENTATION:                                                  X,Z
+COMM                                                                       
+COMM LASER ALTIMETER:                                       Riegl LD90-3300
+COMM
+COMM NAVIGATION:                                 Real-time differential GPS
+COMM
+COMM INSTRUMENT POSITION RELATIVE TO FRAME CENTRE
+COMM   (Relative to Loop Centre)              X (m)      Y (m)        Z (m)
+COMM                Z-coil                  -13.35      0.00          -2.00
+COMM                X-coil                  -14.65      0.00          -0.03
+COMM                Tilt meter set 1 and 2   12.79      1.64          -0.12
+COMM                Laser Altimeter 1        12.94      1.79          -0.12
+COMM                Laser Altimeter 2        12.79     -1.79          -0.12
+COMM                GPS 1                    11.68      2.79          -0.16
+COMM                GPS 2                    10.51      3.95          -0.16
+COMM
+COMM Tx LOOP GEOMETRY RELATIVE TO FRAME CENTRE                             
+COMM   (Relative to Loop Centre)              X (m)      Y (m)             
+COMM                                        -12.64     -2.13               
+COMM                                         -6.15     -8.59               
+COMM                                          5.74     -8.59               
+COMM                                         11.13     -3.19               
+COMM                                         11.13      3.19               
+COMM                                          5.74      8.59               
+COMM                                         -6.15      8.59               
+COMM                                        -12.64      2.13               
+COMM                                        -12.64     -2.13               
+COMM
+COMM TRANSMITTER SPECIFICATIONS                                            
+COMM           Tx Loop Area        337 m2                                  
+COMM           Tx moments          Low Moment (LM and High Moment (HM)     
+COMM           Tx Turns            LM = 2  HM = 12                         
+COMM           Tx Current          LM = 5.9 A   HM = 117 A                 
+COMM           Peak Moment         LM ~ 3,980 Am2  HM ~ 473,000 Am2        
+COMM      Nominal Tx Frame Height  35 m
+COMM
+COMM Tx WAVEFORM SPECIFICATIONS                                            
+COMM           Base Freq           LM = 275 Hz  HM = 25 Hz                 
+COMM           Duty Cycle          LM = 44%   HM = 25%                     
+COMM           Tx On-time          LM = 0.8 ms  HM = 5.0 ms                
+COMM           TX Off-time         LM = 1.018 ms HM = 15.0 ms              
+COMM ----------------------------------------------------------------------
+COMM LM Tx WAVEFORM
+COMM ----------------------------------------------------------------------
+COMM    Time[s]      Amplitude
+COMM  -8.0000E-04    0.0000E+00
+COMM  -7.1847E-04    1.2266E-01
+COMM  -6.5990E-04    1.9609E-01
+COMM  -3.8062E-04    5.2228E-01
+COMM  -1.6838E-04    7.7866E-01
+COMM  -5.1442E-05    9.3110E-01
+COMM   0.0000E+00    1.0000E+00
+COMM   1.2800E-07    9.9627E-01
+COMM   6.2400E-07    9.7994E-01
+COMM   1.1840E-06    9.3093E-01
+COMM   2.9600E-06    6.7610E-01
+COMM   5.1200E-06    3.5920E-01
+COMM   6.2400E-06    2.2688E-01
+COMM   7.5200E-06    1.2234E-01
+COMM   8.8000E-06    5.6996E-02
+COMM   1.0048E-05    2.2692E-02
+COMM   1.2000E-05    4.7230E-03
+COMM   1.2800E-05    0.0000E+00
+COMM   1.0182E-03    0.0000E+00
+COMM ----------------------------------------------------------------------
+COMM HM Tx Waveform
+COMM ----------------------------------------------------------------------
+COMM   Time [s]       Amplitude
+COMM  -5.00000E-03    0.00000E+00
+COMM  -4.79532E-03    6.52344E-01
+COMM  -4.69386E-03    9.33594E-01
+COMM  -3.82897E-03    9.49219E-01
+COMM  -2.13784E-03    9.77344E-01
+COMM  -7.26966E-04    9.94531E-01
+COMM  -2.19939E-06    1.00000E+00
+COMM   1.04316E-05    9.81961E-01
+COMM   5.79841E-05    8.39282E-01
+COMM   1.48063E-04    5.57539E-01
+COMM   2.31183E-04    2.88357E-01
+COMM   2.79509E-04    1.29935E-01
+COMM   3.15850E-04    1.35143E-02
+COMM   3.28993E-04    0.00000E+00
+COMM   1.50000E-02    0.00000E+00
+COMM
+COMM RECEIVER SPECIFICATIONS                                               
+COMM           EM Sensors                dB/dt coils                       
+COMM           Rx coil effective area    Z = 105 m2 X = 115 m2             
+COMM           Rx coil cut-off Freq.     Z = 210 kHz X = 250 kHz           
+COMM    Rx electronics low pass cut-off  300 kHz                           
+COMM
+COMM All data were acquired using SkyTEM뭩 patented interleaved low and    
+COMM high moment transmitter modes, consisting of 110 low moment positive  
+COMM and negative pulse pairs at 275 Hz, and 30 high moment pulse pairs at 
+COMM 25Hz, which repeats every 1.6 seconds.
+COMM
+COMM ----------------------------------------------------------------------
+COMM LM GATE TIMES SUPPLIED                                                
+COMM ALL GATE TIMES ARE FROM THE INITIATION OF CURRENT SWITCH OFF          
+COMM ----------------------------------------------------------------------
+
+COMM LM Gate No.   Gate Width    Gate Open   Gate Centre   Gate Close      
+COMM                  (탎)         (탎)        (탎)          (탎)          
+COMM     9            3.57        14.63       16.415        18.2
+COMM     10           4.57        18.63       20.915        23.2
+COMM     11           5.57        23.63       26.415        29.2
+COMM     12           7.57        29.63       33.415        37.2
+COMM     13           9.57        37.63       42.415        47.2
+COMM     14           12.57       47.63       53.915        60.2
+COMM     15           15.57       60.63       68.415        76.2
+COMM     16           19.57       76.63       86.415        96.2
+COMM     17           24.57       96.63       108.915      121.2
+COMM     18           30.57       121.63      136.915      152.2
+COMM     19           39.57       152.63      172.415      192.2
+COMM     20           50.57       192.63      217.915      243.2
+COMM     21           62.57       243.63      274.915      306.2
+COMM     22           80.57       306.63      346.915      387.2
+COMM     23           100.57      387.63      437.915      488.2
+COMM     24           126.57      488.63      551.915      615.2
+COMM     25           160.57      615.63      695.915      776.2
+COMM     26           201.57      776.63      877.415      978.2
+COMM
+COMM ----------------------------------------------------------------------
+COMM HM GATE TIMES SUPPLIED                                                
+COMM ALL GATE TIMES ARE FROM THE INITIATION OF CURRENT SWITCK OFF          
+COMM ----------------------------------------------------------------------
+
+COMM LM Gate No.   Gate Width    Gate Open   Gate Centre   Gate Close      
+COMM                  (탎)         (탎)        (탎)          (탎)          
+COMM    13           9.57        387.63      392.415       397.20
+COMM    14           12.57       397.63      403.915       410.20
+COMM    15           15.57       410.63      418.415       426.20
+COMM    16           19.57       426.63      436.415       446.20
+COMM    17           24.57       446.63      458.915       471.20
+COMM    18           30.57       471.63      486.915       502.20
+COMM    19           39.57       502.63      522.415       542.20
+COMM    20           50.57       542.63      567.915       593.20
+COMM    21           62.57       593.63      624.915       656.20
+COMM    22           80.57       656.63      696.915       737.20
+COMM    23           100.57      737.63      787.915       838.20
+COMM    24           126.57      838.63      901.915       965.20
+COMM    25           160.57      965.63     1045.915      1126.20
+COMM    26           201.57      1126.63    1227.415      1328.20
+COMM    27           254.57      1328.63    1455.915      1583.20
+COMM    28           321.57      1583.63    1744.415      1905.20
+COMM    29           405.57      1905.63    2108.415      2311.20
+COMM    30           510.57      2311.63    2566.915      2822.20
+COMM    31           645.57      2822.63    3145.415      3468.20
+COMM    32           791.57      3468.63    3864.415      4260.20
+COMM    33           967.57      4260.63    4744.415      5228.20
+COMM    34           1184.57     5228.63    5820.915      6413.20
+COMM    35           1451.57     6413.63    7139.415      7865.20
+COMM    36           1775.57     7865.63    8753.415      9641.20
+COMM    37           2179.57     9641.63    10731.415    11821.20
+COMM    38           2669.57     11821.63   13156.415    14491.20
+COMM
+COMM ----------------------------------------------------------------------
+COMM EM RESPONSE SIGN CONVENTION
+COMM ----------------------------------------------------------------------
+COMM Z-Component response will be positive over a purely conductive        
+COMM halfspace.
+COMM X-Component is positive in the flight direction
+COMM
+COMM ----------------------------------------------------------------------
+COMM TILT METER SIGN CONVENTION
+COMM ----------------------------------------------------------------------
+COMM Angle X is positive when the nose of the Tx loop is pitched up.       
+COMM Angle Y is positive when the starboard side of the frame is lower     
+COMM       than the poert side over level ground.
+COMM
+COMM ----------------------------------------------------------------------
+COMM DATA PROCESSING
+COMM ----------------------------------------------------------------------
+COMM
+COMM GPS POSITION
+COMM Only the Omnistar HP differentially corrected GPS, GP2 position       
+COMM information were used for the Rocklea survey. The data were recorded  
+COMM in the WGS84 datum.                                                   
+COMM The GPS positions were then translated to the centre of the frame     
+COMM based on the instrument x, y and z positions on the system frame.     
+COMM The corrected positions were transformed to GDA94 datum, Map Grid of  
+COMM Australia Zone 52 Projection
+COMM 
+COMM LASER ALTIMETER
+COMM The height processing involves manual and automated routines using a  
+COMM combination of the SkyTEM in-house software and comercial packages.   
+COMM The processing involves the following steps:                          
+COMM Keeping the 5 largest of the 30 values acquired per second, and       
+COMM discarding the remainder to correct for the canopy effect;            
+COMM 3 sec running box-car filter (smoothing filter);                      
+COMM Tilt correction, using the inclinometer data, to account for the      
+COMM altimeter not pointing vertically downward;                           
+COMM Averaging of the tilt corrected values from the two laser altimeters; 
+COMM A 3 sec low pass filter is then applied to the final result.          
+COMM 
+COMM ELECTROMAGNETIC DATA 
+COMM Raw (binary) SkyTEM data have been processed using SkyTEM proprietary 
+COMM software.
+COMM Prior to processing, primary field correction (PFC) was applied to    
+COMM the early LM moment gates (9 to 14) to remove the effects of residual 
+COMM currents that occur due to magnetic coupling between the receiver     
+COMM coils and the transmitter loop. PFC is performed by collecting        
+COMM Low Moment data whilst flying the system so the LM response is clear  
+COMM of any influence from the ground. The primary magnetic field coupling 
+COMM between the receiver coils and the transmitter loop is continuously   
+COMM hardware-monitored, providing a separate value for the magnetic field 
+COMM coupling during each transient sounding. These data are used for raw  
+COMM data correction in a separate post-processing step. The primary field 
+COMM compensation technique has proven stable and has routinely yielded a  
+COMM reduction of the primary field influence in very early time gates by  
+COMM a factor exceeding 17dB.                                              
+COMM
+COMM Following PFC on the Low Moment data  the data are normalized in      
+COMM respect to the effective Rx coil area, Tx coil area, number of turns  
+COMM and current giving the units [pV/(m4*A)].
+COMM The EM data is filtered adaptively based on the signal-to-noise ratio 
+COMM The applied EM filtering method is based on iterative weighted spline 
+COMM fitting routines, which operate in positive/negative symmetric        
+COMM transform spaces. The data weighting scheme relies on an extensive    
+COMM noise evaluation performed on the individual gate values of the raw   
+COMM data decays. Optimised sets of averaging filters are used for each    
+COMM measured moment and type of receiver coil in a stepwise averaging     
+COMM process. This allows for optimal suppression of motion induced noise  
+COMM as well as cultural noise components, while keeping track of the      
+COMM resulting data uncertainty.
+COMM 
+COMM DIGITAL TERRAIN DATA 
+COMM The digital terrain was determined by subtracting the processed laser 
+COMM altimeter (height above ground) data from the GPS altitude (height    
+COMM above the GRS80 ellipsoid) data to yield the height of the ground     
+COMM above the GRS80 ellipsoid.  Then the ellipsoid-geoid separation       
+COMM (N-value) was subtracted to yield the elevation of the ground above   
+COMM the Australian Height Datum (AHD).                                    
+COMM
+COMM
+COMM ----------------------------------------------------------------------
+COMM LATERALLY CONSTRAINED INVERSION (LCI)                                 
+COMM ----------------------------------------------------------------------
+COMM
+COMM The SkyTEM data have been inverted with the AarhusInv program using   
+COMM the Aarhus Workbench LCI algorithm , a group of EM soundings are      
+COMM inverted simultaneously using 1-D models. Each sounding yields a      
+COMM separate layered model, but the models are constrained laterally.     
+COMM The result of the LCI inversion is a quasi-2D model section that      
+COMM varies smoothly along the profile and yields a conductivity model that
+COMM combines the very good shallow depth resolution offered by the        
+COMM low moment data and the larger depth of investigation from the high   
+COMM moment data.                                                          
+COMM All the valid gates supplied were used as inputs to the process.      
+COMM The LCI code was run in multi-layer, smooth-model mode. In this mode  
+COMM the layer thicknesses are kept fixed and the data are inverted only   
+COMM for the resistivity of each layer. Inversion for flight altitude is   
+COMM also included after the first 5 inversion iterations. For this survey 
+COMM a 30 layer model was used, in which the bottommost layer is an        
+COMM infinitely thick halfspace. The thickness of the topmost layer was set
+COMM to 2 m and the depth to the top of the bottommost layer was set to 600
+COMM metres.
+COMM
+COMM  Layer      Thickness       Depth    Resistivity     Resistivity
+COMM              of Layer       to top    Vertical        Horizontal
+COMM                (m)            (m)    Contraints      Constraints
+COMM    1           2.0           0.0             2.0          1.30
+COMM    2           2.3           2.0             2.0          1.30
+COMM    3           2.6           4.3             2.0          1.30
+COMM    4           2.9           6.9             2.0          1.30
+COMM    5           3.4           9.8             2.0          1.30
+COMM    6           3.8           13.2            2.0          1.30
+COMM    7           4.3           17.0            2.0          1.30
+COMM    8           4.9           21.3            2.0          1.30
+COMM    9           5.6           26.3            2.0          1.30
+COMM    10          6.4           31.9            2.0          1.30
+COMM    11          7.3           38.3            2.0          1.30
+COMM    12          8.3           45.6            2.0          1.25
+COMM    13          9.4           53.8            2.0          1.25
+COMM    14          10.7          63.3            2.0          1.25
+COMM    15          12.2          74.0            2.0          1.25
+COMM    16          13.9          86.2            2.0          1.20
+COMM    17          15.8          100.1           2.0          1.20
+COMM    18          18.0          115.9           2.0          1.20
+COMM    19          20.5          133.9           2.0          1.20
+COMM    20          23.3          154.3           2.0          1.20
+COMM    21          26.5          177.6           2.0          1.20
+COMM    22          30.1          204.1           2.0          1.20
+COMM    23          34.3          234.2           2.0          1.20
+COMM    24          39.0          268.5           2.0          1.20
+COMM    25          44.4          307.6           2.0          1.20
+COMM    26          50.5          352.0           2.0          1.20
+COMM    27          57.5          402.5           2.0          1.20
+COMM    28          65.4          460.0           2.0          1.20
+COMM    29          74.5          525.5           2.0          1.20
+COMM    30          84.7          600.0           2.0          1.20
+
+
+COMM
+COMM
+COMM
+COMM
+COMM
+COMM
+COMM LOCATED DATA FORMAT
+COMM
+COMM  Output field format : ASCII ASEG-GDF
+COMM
+COMM FIELD     CHANNEL               DESCRIPTION                                                                                       UNITS                  NULL             FORMAT 
+COMM   1       GA_Project            Geoscience Australia airborne survey project number                                                                                        I10
+COMM   2       Job_No                SkyTEM Australia Job Number                                                                                                                I10
+COMM   3       Fiducial              Fiducial Number                                                                                     s                                      F15.2
+COMM   4       DateTime              Decimal Days since midnight 31/12/1899                                                             days                                    F18.10
+COMM   5       Line                  Line number                                                                                                                                I10
+COMM   6       Easting               Easting (GDA94 MGA Zone 52)                                                                          m                 -9999999.99         F12.2
+COMM   7       Northing              Northing (GDA94 MGA Zone 52)                                                                         m                 -9999999999.99      F15.2
+COMM   8       DTM_AHD               Digital terrain model (Australian Height Datum)                                                      m                 -99999.99           F10.2
+COMM   9       RESI1                 Residual of the data                                                                                                   -9999.999           F10.3
+COMM  10       HEIGHT                Laser altimeter measured height of the Tx loop centre above ground                                   m                 -99999.99           F10.2
+COMM  11       INVHEIGHT             Calculated inversion height of the Tx loop centre above ground                                       m                 -99999.99           F10.2
+COMM  12       DOI                   Estimated Depth of investigation, below ground level                                                 m                 -99999.99           F10.2
+COMM  13:42    Elev                  Elevation to the top of the layer                                                                    m                 -9999999.99       30F12.2
+COMM  43:72    Con                   Conductivity of the layer                                                                          mS/m                -9999999.99999    30F15.5
+COMM  73:102   Con_doi               Conductivity of the layer masked to the depth of investigation                                     mS/m                -9999999.99999    30F15.5
+COMM  103:132  RUnc                  Calculated relative uncertainty of the layer conductivity                                                              -999999.999       30F12.2
