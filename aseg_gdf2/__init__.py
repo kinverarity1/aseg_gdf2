@@ -200,22 +200,19 @@ class GDF2(object):
             for row in chunk.itertuples():
                 yield row._asdict()
 
-    def get_field(self, field_name, record_type='', chunksize=None):
-        column_names = [n for n in self.column_names() if re.match(field_name + '\[[0-9]+\]', n)]
-        # if chunksize is None:
-        return self.df(
-            record_type=record_type, usecols=column_names
-            ).values
-        # else:
-        #     yield self.df_chunked(
-        #         record_type=record_type, usecols=column_names,
-        #         chunksize=chunksize
-        #         ).values
-        # for i, f in enumerate(self.record_types[record_type]['fields']):
-        #     s = sum([f['cols'] for f in self.record_types[record_type]['fields'][:i]])
-        #     if f['name'] == field_name:
-        #         field_data = self.df().iloc[:, s: s + f['cols']].copy()
-        #         if field_data.shape[1] == 1:
-        #             return field_data.iloc[:, 0].values
-        #         else:
-        #             return field_data.values
+    def get_field(self, field_name, record_type='', **kwargs):
+        column_names = [n for n in self.column_names() if re.match(field_name + '(\[[0-9]+\])?', n)]
+        data = self.df(record_type=record_type, usecols=column_names, **kwargs)
+        if data.shape[1] == 1:
+            return data.iloc[:, 0].values
+        else:
+            return data.values
+
+    def get_field_chunked(self, field_name, record_type='', chunksize=200000, **kwargs):
+        column_names = [n for n in self.column_names() if re.match(field_name + '(\[[0-9]+\])?', n)]
+        for data in self.df_chunked(record_type=record_type, usecols=column_names, chunksize=chunksize, **kwargs):
+            if data.shape[1] == 1:
+                yield data.iloc[:, 0].values
+            else:
+                yield data.values
+ 
