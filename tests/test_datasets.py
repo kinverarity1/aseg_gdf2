@@ -18,7 +18,7 @@ def test_iterrows_2():
     for row in gdf.iterrows():
         pass
     assert row['Time'] == 59.9948
-    
+
 def test_chunksize():
     gdf = aseg_gdf2.read(dset('3bcfc711', 'GA1286_Waveforms'))
     lengths = []
@@ -30,10 +30,10 @@ def test_df():
     gdf = aseg_gdf2.read(dset('3bcfc711', 'GA1286_Waveforms'))
     assert len(gdf.df()) == 23040
 
-def test_data():
+def test_field_data():
     gdf = aseg_gdf2.read(dset('9a13704a', 'Mugrave_WB_MGA52'))
     assert gdf.get_field('Con_doi')[4, -6] == [174.27675]
 
-def test_null():
+def test_field_null():
     gdf = aseg_gdf2.read(dset('9a13704a', 'Mugrave_WB_MGA52'))
     assert np.isnan(gdf.get_field('Con_doi')[5, -6])

@@ -134,24 +134,29 @@ class GDF2(object):
         return ''
 
     def _parse_dat(self, dat_filename, method='whitespace'):
+
+        na_values = {}
         colnames, colnamesdict = self.column_names('', retdict=True)
-        na_values = {
-            colname: self.get_field_definition(colnamesdict[colname])['null']
-            for colname in colnames
-            }
+        for colname in colnames:
+            field_name = colnamesdict[colname]
+            null = self.get_field_definition(field_name)['null']
+            if not null is None:
+                na_values[colname] = null
+
         self._read_dat = {
             '': {
                 'func': None,
                 'args': [dat_filename, ],
                 'kwargs': {
                     'names': self.column_names(''),
+                    'index_col': False,
                     'header': None,
-                    'keep_default_na': False,
+                    'keep_default_na': True,
                     'na_values': na_values,
                 }
             }
         }
-        logger.debug('na_values:\n {}'.format(pprint.pformat(na_values)))
+        # logger.debug('na_values:\n {}'.format(pprint.pformat(na_values)))
         self.dat_filename = dat_filename
         if method == 'fixed-widths':
             self._read_dat['']['func'] = pd.read_fwf
@@ -216,15 +221,18 @@ class GDF2(object):
         rt = self._read_dat[record_type]
         kws = dict(**rt['kwargs'])
         kws.update(kwargs)
+        logger.debug('df(kws=\n{})'.format(pprint.pformat(kws)))
         if 'usecols' in kws:
             names, namesdict = self.column_names(record_type, retdict=True)
+            logger.debug('initial usecols = {}'.format(kws['usecols']))
             for key in kws['usecols']:
                 if key in namesdict and isinstance(namesdict[key], list):
                     logger.debug('Expanding {} for kws[\'usecols\']'.format(key))
                     kws['usecols'] = [k for k in kws['usecols'] if not k == key]
                     for col_key in namesdict[key]:
                         kws['usecols'].append(col_key)
-            kws['na_values'] = set(kws['na_values']).intersection(set(kws['usecols']))
+            logger.debug('final usecols = {}'.format(kws['usecols']))
+        logger.debug('final na_values = {}'.format(kws['na_values']))
         return rt['func'](*rt['args'], **kws)
 
     def df_chunked(self, record_type='', chunksize=200000, **kwargs):
@@ -236,16 +244,14 @@ class GDF2(object):
                 yield row._asdict()
 
     def get_field(self, field_name, record_type='', **kwargs):
-        column_names = [n for n in self.column_names() if re.match(field_name + '(\[[0-9]+\])?', n)]
-        data = self.df(record_type=record_type, usecols=column_names, **kwargs)
+        data = self.df(record_type=record_type, usecols=[field_name], **kwargs)
         if data.shape[1] == 1:
             return data.iloc[:, 0].values
         else:
             return data.values
 
     def get_field_chunked(self, field_name, record_type='', chunksize=200000, **kwargs):
-        column_names = [n for n in self.column_names() if re.match(field_name + '(\[[0-9]+\])?', n)]
-        for data in self.df_chunked(record_type=record_type, usecols=column_names, chunksize=chunksize, **kwargs):
+        for data in self.df_chunked(record_type=record_type, usecols=[field_name], chunksize=chunksize, **kwargs):
             if data.shape[1] == 1:
                 yield data.iloc[:, 0].values
             else:
