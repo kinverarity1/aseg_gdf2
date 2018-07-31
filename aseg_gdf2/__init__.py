@@ -2,6 +2,7 @@ import glob
 import logging
 import os
 import re
+import pprint
 
 import pandas as pd
 
@@ -133,6 +134,11 @@ class GDF2(object):
         return ''
 
     def _parse_dat(self, dat_filename, method='whitespace'):
+        colnames, colnamesdict = self.column_names('', retdict=True)
+        na_values = {
+            colname: self.get_field_definition(colnamesdict[colname])['null']
+            for colname in colnames
+            }
         self._read_dat = {
             '': {
                 'func': None,
@@ -140,20 +146,30 @@ class GDF2(object):
                 'kwargs': {
                     'names': self.column_names(''),
                     'header': None,
+                    'keep_default_na': False,
+                    'na_values': na_values,
                 }
             }
         }
+        logger.debug('na_values:\n {}'.format(pprint.pformat(na_values)))
+        self.dat_filename = dat_filename
         if method == 'fixed-widths':
             self._read_dat['']['func'] = pd.read_fwf
             self._read_dat['']['kwargs'].update({
                 'widths': [f['width'] for f in self.record_types['']['fields']],
-                'na_filter': False,
             })
         elif method == 'whitespace':
             self._read_dat['']['func'] = pd.read_table
             self._read_dat['']['kwargs'].update({
                 'delimiter': '\s+',
             })
+
+    def get_field_definition(self, field_name, record_type=''):
+        '''Find field_name in record_types definition and
+        return the dictionary.'''
+        for field in self.record_types[record_type]['fields']:
+            if field['name'] == field_name:
+                return field
 
     def field_names(self, record_type=''):
         '''Return field names from the .dfn file.
@@ -165,7 +181,7 @@ class GDF2(object):
         '''
         return [f['name'] for f in self.record_types[record_type]['fields']]
 
-    def column_names(self, record_type=''):
+    def column_names(self, record_type='', retdict=False):
         '''Provide a name for each column of the data table / pd.DataFrame
         object.
 
@@ -177,14 +193,21 @@ class GDF2(object):
         names, "Con0", "Con1", and so on.
 
         '''
+        namesdict = {}
         names = []
         for field in self.record_types[record_type]['fields']:
             if field['cols'] == 1:
+                namesdict[field['name']] = field['name']
                 names.append(field['name'])
             else:
                 for i in range(field['cols']):
-                    names.append('{}[{:d}]'.format(field['name'], i))
-        return names
+                    colname = '{}[{:d}]'.format(field['name'], i)
+                    namesdict[colname] = field['name']   
+                    names.append(colname)
+        if retdict:
+            return names, namesdict
+        else:
+            return names
 
     def df(self, record_type='', **kwargs):
         rt = self._read_dat[record_type]
