@@ -142,6 +142,7 @@ class GDF2(object):
             null = self.get_field_definition(field_name)['null']
             if not null is None:
                 na_values[colname] = null
+        logger.debug('_parse_dat: na_values = {}'.format(na_values))
 
         self._read_dat = {
             '': {
