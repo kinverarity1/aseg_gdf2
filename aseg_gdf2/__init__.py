@@ -33,7 +33,7 @@ class GDF2(object):
     Arguments:
         dfn_filename (str)
         method (str): how to read the data file. Either assume it is
-            delimited by whitespace (``'whitespace'``) or use the 
+            delimited by whitespace (``'whitespace'``) or use the
             field widths specified in the .dfn file (``'fixed-widths'``).
 
     '''
@@ -50,7 +50,7 @@ class GDF2(object):
             if not line.startswith('DEFN'):
                 logger.warning('line {} does not begin with DEFN: {}'.format(i, line))
                 continue
-            
+
             if not ';' in line:
                 logger.debug('line {}: No field definitions: {}'.format(i, line))
                 m = re.search('RT=(\w*)', line)
@@ -68,7 +68,7 @@ class GDF2(object):
                     if not rt in self.record_types:
                         logger.info('line {}: added record type RT={}'.format(i, rt))
                         self.record_types[rt] = {'fields': [], 'format': None}
-                
+
                 fields = line.split(';')[1:]
                 logger.debug('line {}: looping through {} field definitions for RT={}'.format(i, len(fields), rt))
                 for field in fields:
@@ -89,22 +89,22 @@ class GDF2(object):
                         f['format'], remaining = remaining.strip().split(':', 1)
                         for chunk in remaining.split(','):
                             chunk = chunk.strip()
-                            
+
                             m = re.search('UNITS? *= *(.*)', chunk)
                             if m:
                                 f['unit'] = m.group(1)
                                 continue
-                            
+
                             m = re.search('NAME *= *(.*)', chunk)
                             if m:
                                 f['long_name'] = m.group(1)
                                 continue
-                            
+
                             m = re.search('NULL *= *(.*)', chunk)
                             if m:
                                 f['null'] = m.group(1)
                                 continue
-                            
+
                             f['comment'] = chunk
                     else:
                         f['format'] = remaining
@@ -119,7 +119,7 @@ class GDF2(object):
                         f['width'] = int(m.group(3))
                     else:
                         logger.critical('No field width found in format code {}'.format(f['format']))
-                    
+
                     logger.info('line {}: adding field {} to record type RT={}'.format(i, str(f), rt))
                     self.record_types[rt]['fields'].append(f)
                     if f['name'] == 'RT':
@@ -185,8 +185,8 @@ class GDF2(object):
         '''Provide a name for each column of the data table / pd.DataFrame
         object.
 
-        This accounts for the fact that 2D fields are allowed e.g. a 
-        single field "Con" in the .dfn file may account for 30 columns in the 
+        This accounts for the fact that 2D fields are allowed e.g. a
+        single field "Con" in the .dfn file may account for 30 columns in the
         .dat file with a format code of say 30F10.5.
 
         This method will expand the single field name "Con" into 30 field
@@ -196,13 +196,16 @@ class GDF2(object):
         namesdict = {}
         names = []
         for field in self.record_types[record_type]['fields']:
+            name = field['name']
             if field['cols'] == 1:
-                namesdict[field['name']] = field['name']
-                names.append(field['name'])
+                namesdict[name] = name
+                names.append(name)
             else:
+                namesdict[name] = []
                 for i in range(field['cols']):
-                    colname = '{}[{:d}]'.format(field['name'], i)
-                    namesdict[colname] = field['name']   
+                    colname = '{}[{:d}]'.format(name, i)
+                    namesdict[colname] = name
+                    namesdict[name].append(colname)
                     names.append(colname)
         if retdict:
             return names, namesdict
@@ -213,6 +216,15 @@ class GDF2(object):
         rt = self._read_dat[record_type]
         kws = dict(**rt['kwargs'])
         kws.update(kwargs)
+        if 'usecols' in kws:
+            names, namesdict = self.column_names(record_type, retdict=True)
+            for key in kws['usecols']:
+                if key in namesdict and isinstance(namesdict[key], list):
+                    logger.debug('Expanding {} for kws[\'usecols\']'.format(key))
+                    kws['usecols'] = [k for k in kws['usecols'] if not k == key]
+                    for col_key in namesdict[key]:
+                        kws['usecols'].append(col_key)
+            kws['na_values'] = set(kws['na_values']).intersection(set(kws['usecols']))
         return rt['func'](*rt['args'], **kws)
 
     def df_chunked(self, record_type='', chunksize=200000, **kwargs):
@@ -238,4 +250,3 @@ class GDF2(object):
                 yield data.iloc[:, 0].values
             else:
                 yield data.values
- 
