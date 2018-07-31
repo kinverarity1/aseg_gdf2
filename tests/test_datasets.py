@@ -3,6 +3,7 @@ import os, sys; sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 dset = lambda *args: os.path.join(os.path.dirname(__file__), 'example_datasets', *args)
 
 import pytest
+import numpy as np
 
 import aseg_gdf2
 
@@ -28,3 +29,11 @@ def test_chunksize():
 def test_df():
     gdf = aseg_gdf2.read(dset('3bcfc711', 'GA1286_Waveforms'))
     assert len(gdf.df()) == 23040
+
+def test_data():
+    gdf = aseg_gdf2.read(dset('9a13704a', 'Mugrave_WB_MGA52'))
+    assert gdf.get_field('Con_doi')[4, -6] == [174.27675]
+
+def test_null():
+    gdf = aseg_gdf2.read(dset('9a13704a', 'Mugrave_WB_MGA52'))
+    assert np.isnan(gdf.get_field('Con_doi')[5, -6])
