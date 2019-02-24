@@ -5,6 +5,7 @@ import re
 import pprint
 
 import pandas as pd
+from dask import dataframe as dd
 
 logger = logging.getLogger(__name__)
 
@@ -37,8 +38,9 @@ class GDF2(object):
 
     """
 
-    def __init__(self, dfn_filename, method="whitespace", **kwargs):
+    def __init__(self, dfn_filename, method="whitespace", use_dask=False, **kwargs):
         self._nrecords = None
+        self.use_dask = use_dask
         self._parse_dfn(dfn_filename)
         self._parse_dat(self._find_dat_files(), method)
 
@@ -168,6 +170,7 @@ class GDF2(object):
 
         self._read_dat = {
             "": {
+            PandasEngine: {
                 "func": None,
                 "args": [dat_filename],
                 "kwargs": {
@@ -177,18 +180,30 @@ class GDF2(object):
                     "keep_default_na": True,
                     "na_values": na_values,
                 },
-            }
+            },
+            DaskEngine: {
+                "func": None,
+                "args": [dat_filename],
+                "kwargs": {
+                    "names": self.column_names(""),
+                    "header": None,
+                    "keep_default_na": True,
+                    "na_values": na_values,
+                },
+            },
         }
         # logger.debug('na_values:\n {}'.format(pprint.pformat(na_values)))
         self.dat_filename = dat_filename
         if method == "fixed-widths":
-            self._read_dat[""]["func"] = pd.read_fwf
-            self._read_dat[""]["kwargs"].update(
-                {"widths": [f["width"] for f in self.record_types[""]["fields"]]}
-            )
+            for engine in (PandasEngine, DaskEngine):
+                self._read_dat[""][engine]["func"] = engine.read_fwf
+                self._read_dat[""]["kwargs"].update(
+                    {"widths": [f["width"] for f in self.record_types[""]["fields"]]}
+                )
         elif method == "whitespace":
-            self._read_dat[""]["func"] = pd.read_table
-            self._read_dat[""]["kwargs"].update({"delimiter": "\s+"})
+            for engine in (PandasEngine, DaskEngine):
+                self._read_dat[""][engine]["func"] = engine.read_table
+                self._read_dat[""][engine]["kwargs"].update({"delimiter": "\s+"})
 
     @property
     def nrecords(self):
@@ -257,13 +272,16 @@ class GDF2(object):
         else:
             return names
 
-    def df(self, record_type="", **kwargs):
+
+class Engine(object):
+
+    def expand_field_names(self, record_type="", **kwargs):
+        names, namesdict = self.column_names(record_type, retdict=True)
         rt = self._read_dat[record_type]
         kws = dict(**rt["kwargs"])
         kws.update(kwargs)
         logger.debug("df(kws=\n{})".format(pprint.pformat(kws)))
         if "usecols" in kws:
-            names, namesdict = self.column_names(record_type, retdict=True)
             logger.debug("initial usecols = {}".format(kws["usecols"]))
             for key in kws["usecols"]:
                 if key in namesdict and isinstance(namesdict[key], list):
@@ -273,18 +291,40 @@ class GDF2(object):
                         kws["usecols"].append(col_key)
             logger.debug("final usecols = {}".format(kws["usecols"]))
         logger.debug("final na_values = {}".format(kws["na_values"]))
+        return rt, kws
+
+    def df(self, **kwargs):
+        rt, kws = self.expand_field_names(**kwargs)
         return rt["func"](*rt["args"], **kws)
 
-    def df_chunked(self, record_type="", chunksize=200000, **kwargs):
-        return self.df(record_type=record_type, chunksize=chunksize, **kwargs)
-
-    def iterrows(self, *args, **kwargs):
-        for chunk in self.df_chunked(*args, **kwargs):
+    def iterrows(self, *args, chunksize=5000, **kwargs):
+        '''Iterate over rows of the data table. Each row is a dict.'''
+        for chunk in self.df(*args, chunksize=chunksize, **kwargs):
             for row in chunk.itertuples():
                 yield row._asdict()
 
+
+class PandasEngine(Engine):
+    read_fwf = pd.read_fwf
+    read_table = pd.read_table
+
+
+class DaskEngine(Engine):
+    read_fwf = dd.read_fwf
+    read_table = dd.read_table
+
+    def get_field_series(self, column, record_type=""):
+        df = self.df(record_type=record_type, usecols=[column])
+        return df[column]
+
+
     def get_field(self, field_name, record_type="", **kwargs):
-        data = self.df(record_type=record_type, usecols=[field_name], **kwargs)
+        result = self.df(record_type=record_type, usecols=[field_name], **kwargs)
+        if kwargs.get("chunksize", False):
+            for df in result:
+                yield
+        else:
+         
         if data.shape[1] == 1:
             return data.iloc[:, 0].values
         else:
