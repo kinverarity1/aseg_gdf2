@@ -5,7 +5,7 @@ setup(
     packages=["aseg_gdf2"],
     version="0.1",
     description="Python code to help read ASEG GDF2 packages ",
-    long_description=open("README.md", mode="r", encoding="utf-8").read(),
+    long_description=open("README.md", mode="r").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/kinverarity1/aseg_gdf2",
     author="Kent Inverarity",
