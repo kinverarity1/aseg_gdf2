@@ -1,0 +1,22 @@
+language: python
+
+python:
+    - "2.7"
+    - "3.4"
+    - "3.5"
+    - "3.6"
+    - "3.7"
+
+install:
+  - pip install pandas pytest
+  - pip install -e .
+
+script:
+    - travis_wait py.test
+
+notifications:
+  email:
+    recipients:
+      - kinverarity@hotmail.com
+    on_success: change
+    on_failure: change
