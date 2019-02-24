@@ -5,9 +5,10 @@ python:
     - "3.4"
     - "3.5"
     - "3.6"
+    - "3.7-dev"
 
 install:
-  - pip install pandas pytest
+  - pip install --only-binary=pandas pytest
   - pip install -e .
 
 script:
