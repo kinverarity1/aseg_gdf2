@@ -38,8 +38,17 @@ class GDF2(object):
     """
 
     def __init__(self, dfn_filename, method="whitespace", **kwargs):
+        self._nrecords = None
         self._parse_dfn(dfn_filename)
         self._parse_dat(self._find_dat_files(), method)
+
+    def __repr__(self):
+        r = super().__repr__()
+        nrecords = self._nrecords
+        if nrecords is None:
+            nrecords = "?"
+        r = r[:-1] + " nrecords={}".format(nrecords) + r[-1]
+        return r
 
     def _parse_dfn(self, dfn_filename, join_null_data_rts=True, **kwargs):
         self.record_types = {}
@@ -148,7 +157,6 @@ class GDF2(object):
         return ""
 
     def _parse_dat(self, dat_filename, method="whitespace"):
-
         na_values = {}
         colnames, colnamesdict = self.column_names("", retdict=True)
         for colname in colnames:
@@ -181,6 +189,25 @@ class GDF2(object):
         elif method == "whitespace":
             self._read_dat[""]["func"] = pd.read_table
             self._read_dat[""]["kwargs"].update({"delimiter": "\s+"})
+
+    @property
+    def nrecords(self):
+        if not self._nrecords:
+            # Count the number of rows
+            def blocks(files, size=65536):
+                while True:
+                    b = files.read(size)
+                    if not b:
+                        break
+                    yield b
+
+            with open(self.dat_filename, "r", errors="ignore") as f:
+                self._nrecords = sum(bl.count("\n") for bl in blocks(f))
+        return self._nrecords
+
+    @nrecords.setter
+    def nrecords(self, value):
+        raise NotImplementedError("nrecords is read-only")
 
     def get_field_definition(self, field_name, record_type=""):
         """Find field_name in record_types definition and
