@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import glob
 import logging
 import os
@@ -253,8 +254,8 @@ class GDF2(object):
 
     def iterrows(self, *args, **kwargs):
         for chunk in self.df_chunked(*args, **kwargs):
-            for row in chunk.itertuples():
-                yield row._asdict()
+            for _, series in chunk.iterrows():
+                yield series.to_dict(OrderedDict)
 
     def get_field(self, field_name, record_type="", **kwargs):
         data = self.df(record_type=record_type, usecols=[field_name], **kwargs)
