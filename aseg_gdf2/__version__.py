@@ -1,8 +1,0 @@
-__title__ = 'aseg_gdf2'
-__description__ = 'Python code to help read ASEG GDF2 packages'
-__url__ = 'http://github.com/kinverarity1/aseg_gdf2'
-__version__ = '0.1'
-__author__ = 'Kent Inverarity'
-__author_email__ = 'kinverarity@hotmail.com'
-__license__ = 'MIT License'
-__copyright__ = 'Copyright 2018 Kent Inverarity'
