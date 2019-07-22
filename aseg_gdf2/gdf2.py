@@ -39,9 +39,9 @@ class GDF2(object):
 
     """
 
-    def __init__(self, dfn_filename, method="whitespace", use_dask=False, **kwargs):
+    def __init__(self, dfn_filename, method="whitespace", engine="pandas", **kwargs):
         self._nrecords = None
-        self.use_dask = use_dask
+        self._engine = engine
         self._parse_dfn(dfn_filename)
         self._parse_dat(self._find_dat_files(), method)
 
@@ -171,27 +171,28 @@ class GDF2(object):
 
         self._read_dat = {
             "": {
-            PandasEngine: {
-                "func": None,
-                "args": [dat_filename],
-                "kwargs": {
-                    "names": self.column_names(""),
-                    "index_col": False,
-                    "header": None,
-                    "keep_default_na": True,
-                    "na_values": na_values,
+                PandasEngine: {
+                    "func": None,
+                    "args": [dat_filename],
+                    "kwargs": {
+                        "names": self.column_names(""),
+                        "index_col": False,
+                        "header": None,
+                        "keep_default_na": True,
+                        "na_values": na_values,
+                    },
                 },
-            },
-            DaskEngine: {
-                "func": None,
-                "args": [dat_filename],
-                "kwargs": {
-                    "names": self.column_names(""),
-                    "header": None,
-                    "keep_default_na": True,
-                    "na_values": na_values,
+                DaskEngine: {
+                    "func": None,
+                    "args": [dat_filename],
+                    "kwargs": {
+                        "names": self.column_names(""),
+                        "header": None,
+                        "keep_default_na": True,
+                        "na_values": na_values,
+                    },
                 },
-            },
+            }
         }
         # logger.debug('na_values:\n {}'.format(pprint.pformat(na_values)))
         self.dat_filename = dat_filename
@@ -251,7 +252,7 @@ class GDF2(object):
         .dat file with a format code of say 30F10.5.
 
         This method will expand the single field name "Con" into 30 field
-        names, "Con0", "Con1", and so on.
+        names, "Con[0]", "Con[1]", and so on.
 
         """
         namesdict = {}
@@ -275,7 +276,6 @@ class GDF2(object):
 
 
 class Engine(object):
-
     def expand_field_names(self, record_type="", **kwargs):
         names, namesdict = self.column_names(record_type, retdict=True)
         rt = self._read_dat[record_type]
@@ -298,18 +298,11 @@ class Engine(object):
         rt, kws = self.expand_field_names(**kwargs)
         return rt["func"](*rt["args"], **kws)
 
-<<<<<<< HEAD
-    def iterrows(self, *args, **kwargs):
-        for chunk in self.df_chunked(*args, **kwargs):
-            for _, series in chunk.iterrows():
-                yield series.to_dict(OrderedDict)
-=======
     def iterrows(self, *args, chunksize=5000, **kwargs):
-        '''Iterate over rows of the data table. Each row is a dict.'''
+        """Iterate over rows of the data table. Each row is a dict."""
         for chunk in self.df(*args, chunksize=chunksize, **kwargs):
             for row in chunk.itertuples():
                 yield row._asdict()
->>>>>>> 0a7fe080081ff7557e61435602a3b6b3ad11b53d
 
 
 class PandasEngine(Engine):
@@ -325,14 +318,13 @@ class DaskEngine(Engine):
         df = self.df(record_type=record_type, usecols=[column])
         return df[column]
 
-
     def get_field(self, field_name, record_type="", **kwargs):
         result = self.df(record_type=record_type, usecols=[field_name], **kwargs)
         if kwargs.get("chunksize", False):
             for df in result:
                 yield
         else:
-         
+            pass
         if data.shape[1] == 1:
             return data.iloc[:, 0].values
         else:

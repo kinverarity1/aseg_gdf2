@@ -1,10 +1,14 @@
 # aseg_gdf2
 
-Python code to help read ASEG GDF2 packages. See the [ASEG technical standards](https://www.aseg.org.au/technical/aseg-technical-standards) page for more information about the file format.
+[![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kinverarity1/lasio/blob/master/LICENSE)
 
-Still very much a work in progress.
+Python code to help read ASEG GDF2 data packages.
 
-## Usage
+GDF2 files are a plain text format for conveying geophysical data, . The file format is [defined](https://www.aseg.org.au/technical/aseg-technical-standards) by the Australian Society of Exploration Geophysicists (ASEG). This module provides some Python classe sand functions for reading the definition file (DFN) and extracting subsets of data from the DAT file. It's designed to work on machines with low-ish memory, and to do so it has support for using both [pandas](https://pandas.pydata.org/) and [dask](https://docs.dask.org/en/latest/dataframe.html).
+
+It is still in very early stages of development. Help would be very welcome!
+
+## Examples
 
 ```python
 >>> import aseg_gdf2
@@ -17,10 +21,11 @@ Still very much a work in progress.
 OrderedDict([('Index', 0), ('FLTNUM', 1.0), ('Rx_Voltage', -0.0), ('Flight', 1), ('Time', 0.0052), ('Tx_Current', 0.00176)])
 ```
 
-For .dat files that will fit in memory, you can read them into a pandas.DataFrame:
+For DAT files that will fit in memory, you can read them into a pandas DataFrame:
 
 ```python
->>> gdf.df().head()
+>>> df = gdf.df()
+>>> df.head()
        FLTNUM  Rx_Voltage  Flight     Time  Tx_Current
 0         1.0        -0.0       1   0.0052     0.00176
 1         1.0        -0.0       1   0.0104     0.00176
@@ -245,3 +250,13 @@ You can also retrieve a subset of fields and column names as a pandas.DataFrame 
 
 [5 rows x 32 columns]
 ```
+
+## Installation
+
+```python
+pip install aseg_gdf2
+```
+
+## License
+
+MIT.
