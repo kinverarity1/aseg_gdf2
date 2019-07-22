@@ -7,27 +7,20 @@ Still very much a work in progress.
 ## Usage
 
 ```python
-In [1]: import aseg_gdf2
-
-In [2]: gdf = aseg_gdf2.read(r'tests/example_datasets/3bcfc711/GA1286_Waveforms')
-
-In [3]: gdf.field_names()
-Out[3]: ['FLTNUM', 'Rx_Voltage', 'Flight', 'Time', 'Tx_Current']
-
-In [4]]: for row in gdf.iterrows():
-   ...:     print(row)
-   ...:
+>>> import aseg_gdf2
+>>> gdf = aseg_gdf2.read(r'tests/example_datasets/3bcfc711/GA1286_Waveforms')
+>>> gdf.field_names()
+['FLTNUM', 'Rx_Voltage', 'Flight', 'Time', 'Tx_Current']
+>>> for row in gdf.iterrows():
+...     print(row)
+...     break
 OrderedDict([('Index', 0), ('FLTNUM', 1.0), ('Rx_Voltage', -0.0), ('Flight', 1), ('Time', 0.0052), ('Tx_Current', 0.00176)])
-OrderedDict([('Index', 1), ('FLTNUM', 1.0), ('Rx_Voltage', -0.0), ('Flight', 1), ('Time', 0.0104), ('Tx_Current', 0.00176)])
-OrderedDict([('Index', 2), ('FLTNUM', 1.0), ('Rx_Voltage', -0.0), ('Flight', 1), ('Time', 0.0156), ('Tx_Current', 0.00176)])
-...
 ```
 
 For .dat files that will fit in memory, you can read them into a pandas.DataFrame:
 
 ```python
-In [5]: gdf.df()
-Out[5]:
+>>> gdf.df().head()
        FLTNUM  Rx_Voltage  Flight     Time  Tx_Current
 0         1.0        -0.0       1   0.0052     0.00176
 1         1.0        -0.0       1   0.0104     0.00176
@@ -35,23 +28,13 @@ Out[5]:
 3         1.0        -0.0       1   0.0208     0.00176
 4         1.0        -0.0       1   0.0260     0.00176
 5         1.0        -0.0       1   0.0312     0.00176
-...       ...         ...     ...      ...         ...
-23034     2.0         0.0       2  59.9687    -0.00170
-23035     2.0        -0.0       2  59.9740    -0.00170
-23036     2.0        -0.0       2  59.9792    -0.00170
-23037     2.0        -0.0       2  59.9844    -0.00170
-23038     2.0        -0.0       2  59.9896    -0.00170
-23039     2.0        -0.0       2  59.9948    -0.00170
-
-[23040 rows x 5 columns]
 ```
 
 For .dat files that are too big for memory, you can use the ``chunksize=`` keyword argument to specify the number of rows. Normally you could get away with a few hundred thousand, but for the example we'll use something less:
 
 ```python
-In [6]: for chunk in gdf.df_chunked(chunksize=10000):
-    ...:     print('{} length = {}'.format(type(chunk), len(chunk)))
-    ...:
+>>> for chunk in gdf.df_chunked(chunksize=10000):
+...     print('{} length = {}'.format(type(chunk), len(chunk)))
 <class 'pandas.core.frame.DataFrame'> length = 10000
 <class 'pandas.core.frame.DataFrame'> length = 10000
 <class 'pandas.core.frame.DataFrame'> length = 3040
@@ -60,8 +43,7 @@ In [6]: for chunk in gdf.df_chunked(chunksize=10000):
 The metadata from the .dfn file is there too:
 
 ```python
-In [7]: gdf.record_types
-Out[7]:
+>>> gdf.record_types
 {'': {'fields': [{'cols': 1,
     'comment': '',
     'format': 'F10.1',
@@ -103,13 +85,12 @@ Out[7]:
     'unit': 'Amp',
     'width': 13}],
   'format': None}}
-  ```
+```
 
 Get the data just for one field/column:
 
 ```python
-In [8]: gdf.get_field('Time')
-Out[8]:
+>>> gdf.get_field('Time')
 array([  5.20000000e-03,   1.04000000e-02,   1.56000000e-02, ...,
          5.99844000e+01,   5.99896000e+01,   5.99948000e+01])
 ```
@@ -117,11 +98,8 @@ array([  5.20000000e-03,   1.04000000e-02,   1.56000000e-02, ...,
 What about fields which are 2D arrays? Some GDF2 data files have fields with more than one value per row/record. e.g. in this one the last four fields each take up 30 columns:
 
 ```python
-In [9]: gdf = aseg_gdf2.read(r'tests/example_datasets/9a13704a/Mugrave_WB_MGA52.dfn')
-
-In [10]: print(gdf.dfn_contents)
-```
-```
+>>> gdf = aseg_gdf2.read(r'tests/example_datasets/9a13704a/Mugrave_WB_MGA52.dfn')
+>>> print(gdf.dfn_contents)
 DEFN   ST=RECD,RT=COMM;RT:A4;COMMENTS:A76
 DEFN 1 ST=RECD,RT=;GA_Project:I10:Geoscience Australia airborne survey project number
 DEFN 2 ST=RECD,RT=;Job_No:I10:SkyTEM Australia Job Number
@@ -144,8 +122,7 @@ DEFN 16 ST=RECD,RT=;RUnc:30F12.3:NULL=-999999.999,Relative uncertainty of conduc
 You can see the field names in the normal manner:
 
 ```python
-In [11]: gdf.field_names()
-Out[11]:
+>>> gdf.field_names()
 ['GA_Project',
  'Job_No',
  'Fiducial',
@@ -162,13 +139,12 @@ Out[11]:
  'Con',
  'Con_doi',
  'RUnc']
- ```
+```
 
  Or you can see an "expanded" version of the fields, which is used for the column headings of the data table:
 
- ```python
- In [12]: gdf.column_names()
-Out[12]:
+```python
+>>> gdf.column_names()
 ['GA_Project', 'Job_No', 'Fiducial', 'DATETIME', 'LINE', 'Easting', 'NORTH', 'DTM_AHD', 'RESI1',
  'HEIGHT', 'INVHEI', 'DOI', 'Elev[0]', 'Elev[1]', 'Elev[2]', 'Elev[3]', 'Elev[4]', 'Elev[5]',
  'Elev[6]', 'Elev[7]', 'Elev[8]', 'Elev[9]', 'Elev[10]', 'Elev[11]', 'Elev[12]', 'Elev[13]',
@@ -186,9 +162,7 @@ Out[12]:
  'RUnc[10]', 'RUnc[11]', 'RUnc[12]', 'RUnc[13]', 'RUnc[14]', 'RUnc[15]', 'RUnc[16]', 'RUnc[17]',
  'RUnc[18]', 'RUnc[19]', 'RUnc[20]', 'RUnc[21]', 'RUnc[22]', 'RUnc[23]', 'RUnc[24]', 'RUnc[25]',
  'RUnc[26]', 'RUnc[27]', 'RUnc[28]', 'RUnc[29]']
-
-In [13]: gdf.df().head()
-Out[13]:
+>>> gdf.df().head()
    GA_Project  Job_No   Fiducial      DATETIME    LINE   Easting      NORTH  \
 0        1288   10013  3621109.0  42655.910984  112601  948001.6  7035223.1
 1        1288   10013  3621110.0  42655.910995  112601  948001.9  7035196.8
@@ -216,8 +190,7 @@ Out[13]:
 You can retrieve one of the original field arrays using ``get_field()``:
 
 ```python
-In [14]: gdf.get_field('Elev')
-Out[14]:
+>>> gdf.get_field('Elev')
 array([[ 354.1,  352.1,  349.8, ..., -105.8, -171.2, -245.7],
        [ 353.8,  351.8,  349.5, ..., -106.1, -171.5, -246. ],
        [ 353.7,  351.7,  349.4, ..., -106.2, -171.6, -246.1],
@@ -230,8 +203,7 @@ array([[ 354.1,  352.1,  349.8, ..., -105.8, -171.2, -245.7],
 Or one of the columns:
 
 ```python
-In [15]: gdf.get_field('Elev[0]')
-Out[15]:
+>>> gdf.get_field('Elev[0]')
 array([ 354.1,  353.8,  353.7,  353.9,  354.2,  354.5,  354.6,  354.7,
         354.6,  354.5,  354.3,  354.1,  353.9,  353.8,  353.9,  354. ,
         512.8,  512.6,  512.4,  512.3,  512.3,  512.5,  512.7,  512.9,
@@ -242,8 +214,7 @@ array([ 354.1,  353.8,  353.7,  353.9,  354.2,  354.5,  354.6,  354.7,
 You can also retrieve a subset of fields and column names as a pandas.DataFrame using the [``usecols`` keyword argument](https://pandas.pydata.org/pandas-docs/version/0.22/generated/pandas.read_fwf.html) -- you don't necessarily need to retrieve the whole file at once. Note that the multidimensional ``'Con'`` field is expanded into the column names:
 
 ```python
-In [16]: gdf.df(usecols=['Easting', 'NORTH', 'Con']).head()
-Out[16]:
+>>> gdf.df(usecols=['Easting', 'NORTH', 'Con']).head()
     Easting      NORTH    Con[0]    Con[1]    Con[2]     Con[3]     Con[4]  \
 0  948001.6  7035223.1  28.76870  31.88776  46.04052   83.68201  157.48031
 1  948001.9  7035196.8  31.06555  35.47357  51.17707   92.08103  165.37126
