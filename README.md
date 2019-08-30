@@ -1,6 +1,6 @@
 # aseg_gdf2
 
-[![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kinverarity1/lasio/blob/master/LICENSE)
+[![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kinverarity1/aseg_gdf2/blob/master/LICENSE)
 
 Python code to help read ASEG GDF2 data packages.
 
