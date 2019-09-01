@@ -4,7 +4,17 @@ Python code to help read ASEG GDF2 packages. See the [ASEG technical standards](
 
 Still very much a work in progress.
 
+## Install the latest version
+
+```bash
+$ pip install -U aseg_gdf2
+```
+
 ## Usage
+
+See [tutorials in the notebooks folder](notebooks/README.md).
+
+For a quick start:
 
 ```python
 In [1]: import aseg_gdf2
