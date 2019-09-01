@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def read(filename, **kwargs):
+    filename = str(filename)
     for fn in glob.glob(filename + "*"):
         if fn.lower().endswith("dfn"):
             return GDF2(fn, **kwargs)
@@ -44,6 +45,10 @@ class GDF2(object):
         self._engine = engine
         self._parse_dfn(dfn_filename)
         self._parse_dat(self._find_dat_files(), method)
+        self._engines = {
+            "pandas": PandasEngine(parent=self),
+            "dask": DaskEngine(parent=self),
+        }
 
     def __repr__(self):
         r = super().__repr__()
@@ -52,6 +57,32 @@ class GDF2(object):
             nrecords = "?"
         r = r[:-1] + " nrecords={}".format(nrecords) + r[-1]
         return r
+
+    @property
+    def engine(self):
+        return self._engines[self._engine]
+
+    @engine.setter
+    def engine(self, value):
+        if value == "pandas" or value == PandasEngine:
+            self._engine = "pandas"
+        elif value == "dask" or value == DaskEngine:
+            self._engine = "dask"
+
+    def df(self, *args, **kwargs):
+        return self.engine.df(*args, **kwargs)
+
+    def iterrows(self, *args, **kwargs):
+        return self.engine.iterrows(*args, **kwargs)
+
+    def get_field_series(self, column, record_type=""):
+        df = self.df(record_type=record_type, usecols=[column])
+        return df[column]
+
+    def get_field(self, field_name, record_type="", **kwargs):
+        return self.get_field_series(
+            field_name, record_type=record_type, **kwargs
+        ).values
 
     def _parse_dfn(self, dfn_filename, join_null_data_rts=True, **kwargs):
         self.record_types = {}
@@ -194,7 +225,6 @@ class GDF2(object):
                 },
             }
         }
-        # logger.debug('na_values:\n {}'.format(pprint.pformat(na_values)))
         self.dat_filename = dat_filename
         if method == "fixed-widths":
             for engine in (PandasEngine, DaskEngine):
@@ -276,9 +306,18 @@ class GDF2(object):
 
 
 class Engine(object):
+    def __init__(self, parent):
+        """Create reading engine.
+
+        Args:
+            parent (aseg_gdf2.gdf2.GDF2 object)
+
+        """
+        self.parent = parent
+
     def expand_field_names(self, record_type="", **kwargs):
-        names, namesdict = self.column_names(record_type, retdict=True)
-        rt = self._read_dat[record_type]
+        names, namesdict = self.parent.column_names(record_type, retdict=True)
+        rt = self.parent._read_dat[record_type][self.__class__]
         kws = dict(**rt["kwargs"])
         kws.update(kwargs)
         logger.debug("df(kws=\n{})".format(pprint.pformat(kws)))
@@ -314,27 +353,11 @@ class DaskEngine(Engine):
     read_fwf = dd.read_fwf
     read_table = dd.read_table
 
-    def get_field_series(self, column, record_type=""):
-        df = self.df(record_type=record_type, usecols=[column])
-        return df[column]
-
-    def get_field(self, field_name, record_type="", **kwargs):
-        result = self.df(record_type=record_type, usecols=[field_name], **kwargs)
-        if kwargs.get("chunksize", False):
-            for df in result:
-                yield
-        else:
-            pass
-        if data.shape[1] == 1:
-            return data.iloc[:, 0].values
-        else:
-            return data.values
-
-    def get_field_chunked(self, field_name, record_type="", chunksize=200000, **kwargs):
-        for data in self.df_chunked(
-            record_type=record_type, usecols=[field_name], chunksize=chunksize, **kwargs
-        ):
-            if data.shape[1] == 1:
-                yield data.iloc[:, 0].values
-            else:
-                yield data.values
+    # def get_field_chunked(self, field_name, record_type="", chunksize=200000, **kwargs):
+    #     for data in self.df_chunked(
+    #         record_type=record_type, usecols=[field_name], chunksize=chunksize, **kwargs
+    #     ):
+    #         if data.shape[1] == 1:
+    #             yield data.iloc[:, 0].values
+    #         else:
+    #             yield data.values
