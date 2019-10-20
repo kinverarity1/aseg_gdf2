@@ -6,6 +6,7 @@ import re
 import pprint
 
 import pandas as pd
+from pandas.io.json import json_normalize
 from dask import dataframe as dd
 
 logger = logging.getLogger(__name__)
@@ -29,6 +30,26 @@ def read(filename, **kwargs):
     raise OSError("No data package found at {}".format(filename))
 
 
+class RecordTypesDict(dict):
+    def df(self):
+        '''Convert record_types dict to panda DataFrame.
+
+        Args:
+            self (dict): produced by GDF2._parse_dfn
+
+        Returns: DataFrame
+
+        '''
+        dfs = []
+        for k, v in self.items():
+            df = json_normalize(v, ["fields"])
+            df["record_type"] = k
+            dfs.append(df)
+        df = pd.concat(dfs)
+        cols = ["record_type"] + [k for k in df.columns if not k == "record_type"]
+        return df[cols]
+
+
 class GDF2(object):
     """Load GDF2 data package.
 
@@ -36,7 +57,17 @@ class GDF2(object):
         dfn_filename (str)
         method (str): how to read the data file. Either assume it is
             delimited by whitespace (``'whitespace'``) or use the
-            field widths specified in the .dfn file (``'fixed-widths'``).
+            field widths specified in the .dfn file (``'fixed-widths'``)
+        engine (str): library to use in reading the .dat file - either
+            `'pandas'`, if you are reading small files and/or have a lot
+            of RAM, or `'dask'` if you are reading huge files which will
+            not fit in RAM. Both are equivalent in terms of functionality
+            but you should use `'pandas'` if you can.
+
+    Attributes:
+        engine (either PandasEngine or DaskEngine): the object which
+            is used to read data. You can change it by setting it to
+            either `'pandas'` or `'dask'`.
 
     """
 
@@ -70,22 +101,25 @@ class GDF2(object):
             self._engine = "dask"
 
     def df(self, *args, **kwargs):
+        '''Return the data table as a pandas.DataFrame.
+
+        The actual function called is either ``PandasEngine.df`` or 
+        ``DaskEngine.df``.
+
+        '''
         return self.engine.df(*args, **kwargs)
 
     def iterrows(self, *args, **kwargs):
+        '''Iterate over rows in the data table.
+
+        The actual function called is either `PandasEngine.iterrows`
+        or `DaskEngine.iterrows`.
+
+        '''
         return self.engine.iterrows(*args, **kwargs)
 
-    def get_field_series(self, column, record_type=""):
-        df = self.df(record_type=record_type, usecols=[column])
-        return df[column]
-
-    def get_field(self, field_name, record_type="", **kwargs):
-        return self.get_field_series(
-            field_name, record_type=record_type, **kwargs
-        ).values
-
     def _parse_dfn(self, dfn_filename, join_null_data_rts=True, **kwargs):
-        self.record_types = {}
+        self.record_types = RecordTypesDict() 
         with open(dfn_filename, "r") as f:
             self.dfn_filename = dfn_filename
             self.dfn_contents = f.read()
@@ -256,13 +290,6 @@ class GDF2(object):
     def nrecords(self, value):
         raise NotImplementedError("nrecords is read-only")
 
-    def get_field_definition(self, field_name, record_type=""):
-        """Find field_name in record_types definition and
-        return the dictionary."""
-        for field in self.record_types[record_type]["fields"]:
-            if field["name"] == field_name:
-                return field
-
     def field_names(self, record_type=""):
         """Return field names from the .dfn file.
 
@@ -304,6 +331,75 @@ class GDF2(object):
         else:
             return names
 
+    def get_field_definition(self, field_name, record_type=""):
+        """Find field_name in record_types definition and
+        return the dictionary."""
+        for field in self.record_types[record_type]["fields"]:
+            if field["name"] == field_name:
+                return field
+
+    def get_field_columns(self, field_name, record_type=""):
+        '''Expand a field name (if necessary) into the constituent column names.
+
+        Args:
+            field_name (str): field name from definition file.
+            record_type (str): record type - NULL by default.
+
+        Returns: a tuple of column names which are guaranteed to exist in
+            the data table methods.
+
+        '''
+        field = self.get_field_definition(field_name, record_type=record_type)
+        if field is None and re.search(r"\[\d*\]$", field_name):
+            return (field_name, )
+        if field["cols"] == 1:
+            return (field_name, )
+        else:
+            columns = []
+            for i in range(field["cols"]):
+                columns.append("{}[{:d}]".format(field_name, i))
+            return tuple(columns)
+
+    def get_fields_data(self, field_names, record_type=""):
+        '''Return a tuple of ndarrays with the data for requested fields.
+
+        Args:
+            field_names (list-like): list of field names from
+                (must exist in `gdf.field_names()`)
+            record_type (str):
+
+        Returns: a tuple of ndarrays
+
+        '''
+        columns = []
+        field_to_columns_mapping = {}
+        for field_name in field_names:
+            # Check to see if it is 1D or 2D
+            field = self.get_field_definition(field_name, record_type=record_type)
+            if field["cols"] == 1:
+                columns.append(field_name)
+                field_to_columns_mapping[field_name] = [field_name]
+            elif field["cols"] > 1:
+                field_columns = self.get_field_columns(field_name, record_type=record_type)
+                columns += list(field_columns)
+                field_to_columns_mapping[field_name] = list(field_columns)
+        df = self.df(record_type=record_type, usecols=columns)
+        field_arrays = []
+        for field_name in field_names:
+            array = df[field_to_columns_mapping[field_name]].values
+            if array.shape[1] == 1:
+                array = array.ravel()
+            field_arrays.append(array)
+        return tuple(field_arrays)
+
+    def get_field_data(self, field_name, record_type=""):
+        '''Return the data for a field.
+
+        This is simply a wrapper around ``GDF2.get_fields_data``.
+
+        '''
+        return self.get_fields_data([field_name], record_type=record_type)[0]
+
 
 class Engine(object):
     def __init__(self, parent):
@@ -341,7 +437,7 @@ class Engine(object):
         """Iterate over rows of the data table. Each row is a dict."""
         for chunk in self.df(*args, chunksize=chunksize, **kwargs):
             for row in chunk.itertuples():
-                yield row._asdict()
+                yield dict(row._asdict())
 
 
 class PandasEngine(Engine):
@@ -352,12 +448,3 @@ class PandasEngine(Engine):
 class DaskEngine(Engine):
     read_fwf = dd.read_fwf
     read_table = dd.read_table
-
-    # def get_field_chunked(self, field_name, record_type="", chunksize=200000, **kwargs):
-    #     for data in self.df_chunked(
-    #         record_type=record_type, usecols=[field_name], chunksize=chunksize, **kwargs
-    #     ):
-    #         if data.shape[1] == 1:
-    #             yield data.iloc[:, 0].values
-    #         else:
-    #             yield data.values
