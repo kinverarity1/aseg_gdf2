@@ -283,7 +283,17 @@ class GDF2(object):
                     yield b
 
             with open(self.dat_filename, "r", errors="ignore") as f:
-                self._nrecords = sum(bl.count("\n") for bl in blocks(f))
+                newlines = sum(bl.count("\n") for bl in blocks(f))
+            
+            with open(self.dat_filename, "rb") as f:
+                f.seek(-1, os.SEEK_END)
+                last_byte = f.read(1)
+                if last_byte in (b"\r", b"\n"):
+                    self._nrecords = newlines
+                else:
+                    # If the last line contains non-EOL chars, it should be counted
+                    # as a record... ?
+                    self._nrecords = newlines + 1
         return self._nrecords
 
     @nrecords.setter
