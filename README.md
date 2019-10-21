@@ -177,6 +177,18 @@ Under the hood this works using pandas' [``usecols`` keyword argument](https://p
 pip install -U aseg_gdf2
 ```
 
+## List of changes
+
+### Version 0.2
+- Add transparent support for using either pandas or dask to read the data table file
+- Simplify field data API: `gdf.get_field_data()` and `gdf.get_fields_data()`
+
+### Version 0.1.2
+- Fix #16 - expanded column names not working in gdf2.df_chunked()
+
+### Version 0.1
+- Initial development
+
 ## License
 
 MIT.
