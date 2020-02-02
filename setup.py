@@ -16,5 +16,5 @@ setup(
         "Topic :: Scientific/Engineering",
     ),
     keywords="science geophysics",
-    install_requires=("pandas",),
+    install_requires=("pandas", "dask", "fortranformat", ),
 )
