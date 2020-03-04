@@ -32,14 +32,14 @@ def read(filename, **kwargs):
 
 class RecordTypesDict(dict):
     def df(self):
-        '''Convert record_types dict to panda DataFrame.
+        """Convert record_types dict to panda DataFrame.
 
         Args:
             self (dict): produced by GDF2._parse_dfn
 
         Returns: DataFrame
 
-        '''
+        """
         dfs = []
         for k, v in self.items():
             df = json_normalize(v, ["fields"])
@@ -101,25 +101,25 @@ class GDF2(object):
             self._engine = "dask"
 
     def df(self, *args, **kwargs):
-        '''Return the data table as a pandas.DataFrame.
+        """Return the data table as a pandas.DataFrame.
 
-        The actual function called is either ``PandasEngine.df`` or 
+        The actual function called is either ``PandasEngine.df`` or
         ``DaskEngine.df``.
 
-        '''
+        """
         return self.engine.df(*args, **kwargs)
 
     def iterrows(self, *args, **kwargs):
-        '''Iterate over rows in the data table.
+        """Iterate over rows in the data table.
 
         The actual function called is either `PandasEngine.iterrows`
         or `DaskEngine.iterrows`.
 
-        '''
+        """
         return self.engine.iterrows(*args, **kwargs)
 
     def _parse_dfn(self, dfn_filename, join_null_data_rts=True, **kwargs):
-        self.record_types = RecordTypesDict() 
+        self.record_types = RecordTypesDict()
         with open(dfn_filename, "r") as f:
             self.dfn_filename = dfn_filename
             self.dfn_contents = f.read()
@@ -263,13 +263,13 @@ class GDF2(object):
         if method == "fixed-widths":
             for engine in (PandasEngine, DaskEngine):
                 self._read_dat[""][engine]["func"] = engine.read_fwf
-                self._read_dat[""]["kwargs"].update(
-                    {"widths": [f["width"] for f in self.record_types[""]["fields"]]}
+                self._read_dat[""][engine]["kwargs"].update(
+                    {"widths": [c["width"] for c in self.get_column_definitions("")]}
                 )
         elif method == "whitespace":
             for engine in (PandasEngine, DaskEngine):
                 self._read_dat[""][engine]["func"] = engine.read_table
-                self._read_dat[""][engine]["kwargs"].update({"delimiter": "\s+"})
+                self._read_dat[""][engine]["kwargs"].update({"delimiter": r"\s+"})
 
     @property
     def nrecords(self):
@@ -284,7 +284,7 @@ class GDF2(object):
 
             with open(self.dat_filename, "r", errors="ignore") as f:
                 newlines = sum(bl.count("\n") for bl in blocks(f))
-            
+
             with open(self.dat_filename, "rb") as f:
                 f.seek(-1, os.SEEK_END)
                 last_byte = f.read(1)
@@ -341,6 +341,41 @@ class GDF2(object):
         else:
             return names
 
+    def get_column_definitions(self, record_type=""):
+        """Return the field definition for all the columns i.e. the same
+        as get_field_definitions(), but with 2D fields expanded.
+
+        Args:
+            record_type (str): record type - NULL by default
+
+        Returns:
+            a sequence of dictionaries with "field_name", "column_name",
+            etc.
+
+        """
+        columns = []
+        for field in self.record_types[record_type]["fields"]:
+            for column_name in self.get_field_columns(field["name"], record_type):
+                m = re.match("([0-9]*)([a-zA-Z]{1})([0-9]+)(.*)", field["format"])
+                if m:
+                    column_format = m.group(2) + m.group(3) + m.group(4)
+                else:
+                    column_format = field["format"]
+                column = {
+                    "name": column_name,
+                    "unit": field["unit"],
+                    "null": field["null"],
+                    "width": field["width"],
+                    "column_format": column_format,
+                    "field_name": field["name"],
+                    "field_comment": field["comment"],
+                    "field_format": field["format"],
+                    "field_long_name": field["long_name"],
+                    "field_cols": field["cols"],
+                }
+                columns.append(column)
+        return columns
+
     def get_field_definition(self, field_name, record_type=""):
         """Find field_name in record_types definition and
         return the dictionary."""
@@ -349,7 +384,7 @@ class GDF2(object):
                 return field
 
     def get_field_columns(self, field_name, record_type=""):
-        '''Expand a field name (if necessary) into the constituent column names.
+        """Expand a field name (if necessary) into the constituent column names.
 
         Args:
             field_name (str): field name from definition file.
@@ -358,12 +393,12 @@ class GDF2(object):
         Returns: a tuple of column names which are guaranteed to exist in
             the data table methods.
 
-        '''
+        """
         field = self.get_field_definition(field_name, record_type=record_type)
         if field is None and re.search(r"\[\d*\]$", field_name):
-            return (field_name, )
+            return (field_name,)
         if field["cols"] == 1:
-            return (field_name, )
+            return (field_name,)
         else:
             columns = []
             for i in range(field["cols"]):
@@ -371,7 +406,7 @@ class GDF2(object):
             return tuple(columns)
 
     def get_fields_data(self, field_names, record_type=""):
-        '''Return a tuple of ndarrays with the data for requested fields.
+        """Return a tuple of ndarrays with the data for requested fields.
 
         Args:
             field_names (list-like): list of field names from
@@ -380,7 +415,7 @@ class GDF2(object):
 
         Returns: a tuple of ndarrays
 
-        '''
+        """
         columns = []
         field_to_columns_mapping = {}
         for field_name in field_names:
@@ -390,7 +425,9 @@ class GDF2(object):
                 columns.append(field_name)
                 field_to_columns_mapping[field_name] = [field_name]
             elif field["cols"] > 1:
-                field_columns = self.get_field_columns(field_name, record_type=record_type)
+                field_columns = self.get_field_columns(
+                    field_name, record_type=record_type
+                )
                 columns += list(field_columns)
                 field_to_columns_mapping[field_name] = list(field_columns)
         df = self.df(record_type=record_type, usecols=columns)
@@ -403,11 +440,11 @@ class GDF2(object):
         return tuple(field_arrays)
 
     def get_field_data(self, field_name, record_type=""):
-        '''Return the data for a field.
+        """Return the data for a field.
 
         This is simply a wrapper around ``GDF2.get_fields_data``.
 
-        '''
+        """
         return self.get_fields_data([field_name], record_type=record_type)[0]
 
 
