@@ -1,11 +1,9 @@
 language: python
 
 python:
-    # - "2.7"    # weird errors, don't need to support this anyway
-    # - "3.4"    # too slow to build pandas
-    - "3.5"
     - "3.6"
-    - "3.7-dev"
+    - "3.7"
+    - "3.8"
 
 install:
   - pip install --only-binary=pandas dask[dataframe] pytest
