@@ -179,6 +179,9 @@ pip install -U aseg_gdf2
 
 ## List of changes
 
+### Version 0.3
+- Fix #19 (`GDF2(..., method='fixed-widths')` was broken)
+
 ### Version 0.2
 - Add transparent support for using either pandas or dask to read the data table file
 - Simplify field data API: `gdf.get_field_data()` and `gdf.get_fields_data()`
