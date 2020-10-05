@@ -130,13 +130,13 @@ class GDF2(object):
 
             if not ";" in line:
                 logger.debug("line {}: No field definitions: {}".format(i, line))
-                m = re.search("RT=(\w*)", line)
+                m = re.search(r"RT=(\w*)", line)
                 if m:
                     rt = m.group(1)
                     logger.info("line {}: added record type RT={}".format(i, rt))
                     self.record_types[m.group(1)] = {"fields": [], "format": None}
             else:
-                m = re.search("RT=(\w*)", line)
+                m = re.search(r"RT=(\w*)", line)
                 if m:
                     rt = m.group(1)
                     if join_null_data_rts:
