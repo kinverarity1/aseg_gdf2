@@ -22,9 +22,8 @@ def test_repr_1():
     """
     gdf = aseg_gdf2.read(data_src_1)
     res = gdf.__repr__()
-    assert res, "<aseg_gdf2.gdf2.GDF2 object at 0x10cfdead0 nrecords=23040>"
-    assert gdf.__repr__, "<aseg_gdf2.gdf2.GDF2 object at 0x10cfdead0 nrecords=23040>"
-    assert gdf.nrecords, 23040
+    assert res.endswith("nrecords=23040>")
+    assert gdf.nrecords == 23040
 
 
 def test_get_column_definitions_1():
