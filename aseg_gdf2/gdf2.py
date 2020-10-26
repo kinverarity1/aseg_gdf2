@@ -83,7 +83,8 @@ class GDF2(object):
 
     def __repr__(self):
         r = super().__repr__()
-        nrecords = self.nrecords
+        # _nrecords is a stub to delay nrecords resolution till requested.
+        nrecords = self._nrecords
         if nrecords is None:
             nrecords = "?"
         r = r[:-1] + " nrecords={}".format(nrecords) + r[-1]

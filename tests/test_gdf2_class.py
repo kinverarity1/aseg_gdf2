@@ -21,9 +21,14 @@ def test_repr_1():
     GDF2's repr will display the number of records: nrecords
     """
     gdf = aseg_gdf2.read(data_src_1)
-    res = gdf.__repr__()
-    assert res.endswith("nrecords=23040>")
-    assert gdf.nrecords == 23040
+
+    # Gdf.nrecords is not called yet, so it is set to "?"
+    assert gdf.__repr__().endswith("nrecords=?>")
+    # Call gdf.nrecords
+    nrecords = gdf.nrecords
+    assert nrecords == 23040
+    # After nrecords is called nrecords will be repored in __repr__
+    assert gdf.__repr__().endswith("nrecords=23040>")
 
 
 def test_get_column_definitions_1():
