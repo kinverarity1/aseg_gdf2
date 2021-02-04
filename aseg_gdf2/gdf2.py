@@ -75,7 +75,8 @@ class GDF2(object):
         self._nrecords = None
         self._engine = engine
         self._parse_dfn(dfn_filename)
-        self._parse_dat(self._find_dat_files(), method)
+        self.dat_filename = self._find_dat_file()
+        self.method = method
         self._engines = {
             "pandas": PandasEngine(parent=self),
             "dask": DaskEngine(parent=self),
@@ -124,6 +125,7 @@ class GDF2(object):
         with open(dfn_filename, "r") as f:
             self.dfn_filename = dfn_filename
             self.dfn_contents = f.read()
+
         for i, line in enumerate(self.dfn_contents.splitlines()):
             if not line.startswith("DEFN"):
                 logger.warning("line {} does not begin with DEFN: {}".format(i, line))
@@ -217,7 +219,7 @@ class GDF2(object):
                     if f["name"] == "RT":
                         self.record_types[rt]["format"] = f["format"]
 
-    def _find_dat_files(self):
+    def _find_dat_file(self):
         for ext in ("dat", "DAT"):
             filename = self.dfn_filename[:-3] + ext
             if os.path.isfile(filename):
@@ -225,7 +227,10 @@ class GDF2(object):
         logger.error("No data file located.")
         return ""
 
-    def _parse_dat(self, dat_filename, method="whitespace"):
+    # def _parse_dat(self):
+    @property
+    def _read_dat(self):
+
         na_values = {}
         colnames, colnamesdict = self.column_names("", retdict=True)
         for colname in colnames:
@@ -235,11 +240,11 @@ class GDF2(object):
                 na_values[colname] = null
         logger.debug("_parse_dat: na_values = {}".format(na_values))
 
-        self._read_dat = {
+        value = {
             "": {
                 PandasEngine: {
                     "func": None,
-                    "args": [dat_filename],
+                    "args": [self.dat_filename],
                     "kwargs": {
                         "names": self.column_names(""),
                         "index_col": False,
@@ -250,7 +255,7 @@ class GDF2(object):
                 },
                 DaskEngine: {
                     "func": None,
-                    "args": [dat_filename],
+                    "args": [self.dat_filename],
                     "kwargs": {
                         "names": self.column_names(""),
                         "header": None,
@@ -260,17 +265,17 @@ class GDF2(object):
                 },
             }
         }
-        self.dat_filename = dat_filename
-        if method == "fixed-widths":
+        if self.method == "fixed-widths":
             for engine in (PandasEngine, DaskEngine):
-                self._read_dat[""][engine]["func"] = engine.read_fwf
-                self._read_dat[""][engine]["kwargs"].update(
+                value[""][engine]["func"] = engine.read_fwf
+                value[""][engine]["kwargs"].update(
                     {"widths": [c["width"] for c in self.get_column_definitions("")]}
                 )
-        elif method == "whitespace":
+        elif self.method == "whitespace":
             for engine in (PandasEngine, DaskEngine):
-                self._read_dat[""][engine]["func"] = engine.read_table
-                self._read_dat[""][engine]["kwargs"].update({"delimiter": r"\s+"})
+                value[""][engine]["func"] = engine.read_table
+                value[""][engine]["kwargs"].update({"delimiter": r"\s+"})
+        return value
 
     @property
     def nrecords(self):
