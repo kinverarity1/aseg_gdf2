@@ -13,6 +13,27 @@ logger = logging.getLogger(__name__)
 
 
 def read(filename, **kwargs):
+    """Load GDF2 data package.
+
+    Arguments:
+        dfn_filename (str)
+        method (str): how to read the data file. Either assume it is
+            delimited by whitespace (``'whitespace'``) or use the
+            field widths specified in the .dfn file (``'fixed-widths'``)
+        engine (str): library to use in reading the .dat file - either
+            `'pandas'`, if you are reading small files and/or have a lot
+            of RAM, or `'dask'` if you are reading huge files which will
+            not fit in RAM. Both are equivalent in terms of functionality
+            but you should use `'pandas'` if you can.
+
+    Returns: :class:`aseg_gdf2.GDF2` object.
+
+    Attributes:
+        engine (either PandasEngine or DaskEngine): the object which
+            is used to read data. You can change it by setting it to
+            either `'pandas'` or `'dask'`.
+
+    """
     filename = str(filename)
     for fn in glob.glob(filename + "*"):
         if fn.lower().endswith("dfn"):
@@ -210,6 +231,13 @@ class GDF2(object):
                             "No field width found in format code {}".format(f["format"])
                         )
 
+                    dtype = str
+                    if "F" in f["format"]:
+                        dtype = float
+                    elif "I" in f["format"]:
+                        dtype = int
+                    f["inferred_dtype"] = dtype
+
                     logger.info(
                         "line {}: adding field {} to record type RT={}".format(
                             i, str(f), rt
@@ -218,6 +246,9 @@ class GDF2(object):
                     self.record_types[rt]["fields"].append(f)
                     if f["name"] == "RT":
                         self.record_types[rt]["format"] = f["format"]
+        dups = self._find_duplicate_field_names()
+        if dups:
+            logger.warning(f"DFN file has duplicate fields: {dups}")
 
     def _find_dat_file(self):
         for ext in ("dat", "DAT"):
@@ -251,6 +282,7 @@ class GDF2(object):
                         "header": None,
                         "keep_default_na": True,
                         "na_values": na_values,
+                        "dtype": dict(zip(self.column_names(), self.column_dtypes())),
                     },
                 },
                 DaskEngine: {
@@ -261,6 +293,7 @@ class GDF2(object):
                         "header": None,
                         "keep_default_na": True,
                         "na_values": na_values,
+                        "dtype": dict(zip(self.column_names(), self.column_dtypes())),
                     },
                 },
             }
@@ -268,12 +301,14 @@ class GDF2(object):
         if self.method == "fixed-widths":
             for engine in (PandasEngine, DaskEngine):
                 value[""][engine]["func"] = engine.read_fwf
+                value[""][engine]["func_name"] = "read_fwf"
                 value[""][engine]["kwargs"].update(
                     {"widths": [c["width"] for c in self.get_column_definitions("")]}
                 )
         elif self.method == "whitespace":
             for engine in (PandasEngine, DaskEngine):
                 value[""][engine]["func"] = engine.read_table
+                value[""][engine]["func_name"] = "read_table"
                 value[""][engine]["kwargs"].update({"delimiter": r"\s+"})
         return value
 
@@ -305,6 +340,43 @@ class GDF2(object):
     @nrecords.setter
     def nrecords(self, value):
         raise NotImplementedError("nrecords is read-only")
+
+    def _find_duplicate_field_names(self):
+        """Find duplicate field names.
+
+        Returns: a dictionary of {field_name: occurrence_count} for those
+            which occur more than once.
+
+        """
+        counts = {}
+        for c in self.column_names():
+            if not c in counts:
+                counts[c] = 1
+            else:
+                counts[c] += 1
+        return {k: v for k, v in counts.items() if v > 1}
+
+    def fix_duplicate_field_names(self, suffix="__{n}"):
+        """Fix field names so that any duplicates are made unique.
+
+        Args:
+            suffix (str): Python string with formatting field {n} to represent
+                the cumulative count of the duplicated field name. So e.g.
+                the default "__{n}" would turn the field name "LINENUM" into
+                "LINENUM__1" for the first occurrence, "LINENUM__2" for the 
+                second, and so on. Other options could be ":{n}" or "({n})"...
+        
+        Returns: nothing, operates in-place on the GDF2 object.
+
+        """
+        dups = self._find_duplicate_field_names()
+        for dup_name in dups.keys():
+            dup_count = 1
+            for i, field in enumerate(self.record_types['']['fields']):
+                if field['name'] == dup_name:
+                    new_name = f"{dup_name}" + suffix.format(n=dup_count)
+                    self.record_types['']['fields'][i]['name'] = new_name
+                    dup_count += 1
 
     def field_names(self, record_type=""):
         """Return field names from the .dfn file.
@@ -346,6 +418,28 @@ class GDF2(object):
             return names, namesdict
         else:
             return names
+
+    def column_dtypes(self, record_type="", retdict=False):
+        """Provide a dtype for each column of the data table / pd.DataFrame
+        object.
+
+        This accounts for the fact that 2D fields are allowed e.g. a
+        single field "Con" in the .dfn file may account for 30 columns in the
+        .dat file with a format code of say 30F10.5.
+
+
+        """
+        dtypesdict = {}
+        dtypes = []
+        for field in self.record_types[record_type]["fields"]:
+            dtype = field["inferred_dtype"]
+            dtypesdict[dtype] = dtype
+            dtypes.append(dtype)
+        if retdict:
+            return dtypes, dtypesdict
+        else:
+            return dtypes
+
 
     def get_column_definitions(self, record_type=""):
         """Return the field definition for all the columns i.e. the same
