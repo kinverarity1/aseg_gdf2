@@ -13,7 +13,6 @@ setup(
     author_email="kinverarity@hotmail.com",
     license="MIT",
     classifiers=(
-        "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering",
     ),
     keywords="science geophysics",
