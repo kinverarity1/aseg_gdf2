@@ -6,7 +6,7 @@ import re
 import pprint
 
 import pandas as pd
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 from dask import dataframe as dd
 
 logger = logging.getLogger(__name__)
