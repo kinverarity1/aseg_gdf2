@@ -4,7 +4,7 @@
 
 Python code to help read ASEG GDF2 data packages.
 
-GDF2 files are a plain text format for storing geophysical data. The file format is [defined](https://www.aseg.org.au/technical/aseg-technical-standards) by the Australian Society of Exploration Geophysicists (ASEG). This module provides Python functions for reading the definition file (.dfn) and extracting data from the data table file (.dat). It's designed to work on machines with low-ish memory, and to do so it has a dependency on [pandas](https://pandas.pydata.org/) and [dask](https://docs.dask.org/en/latest/dataframe.html).
+GDF2 files are a plain text format for storing geophysical data. The file format is [defined](https://www.aseg.org.au/technical/aseg-technical-standards) ([Archive.org link](https://web.archive.org/web/20240320080221/https://www.aseg.org.au/technical/aseg-technical-standards)) by the Australian Society of Exploration Geophysicists (ASEG). This module provides Python functions for reading the definition file (.dfn) and extracting data from the data table file (.dat). It's designed to work on machines with low-ish memory, and to do so it has a dependency on [pandas](https://pandas.pydata.org/) and [dask](https://docs.dask.org/en/latest/dataframe.html).
 
 It is still in very early stages of development. Help would be very welcome!
 
