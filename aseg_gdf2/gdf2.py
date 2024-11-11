@@ -197,22 +197,23 @@ class GDF2(object):
                     if ":" in remaining:
                         f["format"], remaining = remaining.strip().split(":", 1)
                         for chunk in remaining.split(","):
+                            logger.debug(f"checking '{chunk}' against unit, name and null regexps")
                             chunk = chunk.strip()
 
-                            m = re.search("UNITS? *= *(.*)", chunk)
+                            m = re.search("UNITS? *= *([^:]*)", chunk)
                             if m:
                                 f["unit"] = m.group(1)
-                                continue
+                                logger.debug(f"FOUND UNIT/UNITS as '{m.group(1)}'")
 
-                            m = re.search("NAME *= *(.*)", chunk)
+                            m = re.search("NAME *= *([^:]*)", chunk)
                             if m:
                                 f["long_name"] = m.group(1)
-                                continue
+                                logger.debug(f"FOUND NAME as '{m.group(1)}'")
 
-                            m = re.search("NULL *= *(.*)", chunk)
+                            m = re.search(r"NULL *= *([0-9\.\-\+\,]*)", chunk)
                             if m:
                                 f["null"] = m.group(1)
-                                continue
+                                logger.debug(f"FOUND NULL as '{m.group(1)}'")
 
                             f["comment"] = chunk
                     else:
