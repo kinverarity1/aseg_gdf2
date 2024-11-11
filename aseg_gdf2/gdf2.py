@@ -66,7 +66,7 @@ class RecordTypesDict(dict):
             df = json_normalize(v, ["fields"])
             df["record_type"] = k
             dfs.append(df)
-        df = pd.concat(dfs)
+        df = pd.concat(dfs).reset_index()
         cols = ["record_type"] + [k for k in df.columns if not k == "record_type"]
         return df[cols]
 
