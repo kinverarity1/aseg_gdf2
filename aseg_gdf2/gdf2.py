@@ -197,7 +197,9 @@ class GDF2(object):
                     if ":" in remaining:
                         f["format"], remaining = remaining.strip().split(":", 1)
                         for chunk in remaining.split(","):
-                            logger.debug(f"checking '{chunk}' against unit, name and null regexps")
+                            logger.debug(
+                                f"checking '{chunk}' against unit, name and null regexps"
+                            )
                             chunk = chunk.strip()
 
                             m = re.search("UNITS? *= *([^:]*)", chunk)
@@ -262,7 +264,6 @@ class GDF2(object):
     # def _parse_dat(self):
     @property
     def _read_dat(self):
-
         na_values = {}
         colnames, colnamesdict = self.column_names("", retdict=True)
         for colname in colnames:
@@ -364,19 +365,19 @@ class GDF2(object):
             suffix (str): Python string with formatting field {n} to represent
                 the cumulative count of the duplicated field name. So e.g.
                 the default "__{n}" would turn the field name "LINENUM" into
-                "LINENUM__1" for the first occurrence, "LINENUM__2" for the 
+                "LINENUM__1" for the first occurrence, "LINENUM__2" for the
                 second, and so on. Other options could be ":{n}" or "({n})"...
-        
+
         Returns: nothing, operates in-place on the GDF2 object.
 
         """
         dups = self._find_duplicate_field_names()
         for dup_name in dups.keys():
             dup_count = 1
-            for i, field in enumerate(self.record_types['']['fields']):
-                if field['name'] == dup_name:
+            for i, field in enumerate(self.record_types[""]["fields"]):
+                if field["name"] == dup_name:
                     new_name = f"{dup_name}" + suffix.format(n=dup_count)
-                    self.record_types['']['fields'][i]['name'] = new_name
+                    self.record_types[""]["fields"][i]["name"] = new_name
                     dup_count += 1
 
     def field_names(self, record_type=""):
@@ -440,7 +441,6 @@ class GDF2(object):
             return dtypes, dtypesdict
         else:
             return dtypes
-
 
     def get_column_definitions(self, record_type=""):
         """Return the field definition for all the columns i.e. the same

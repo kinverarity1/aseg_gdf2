@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="aseg_gdf2",
-    packages=("aseg_gdf2", ),
+    packages=("aseg_gdf2",),
     use_scm_version=True,
     setup_requires=["setuptools_scm"],
     description="Python package to help read ASEG GDF2 packages ",
