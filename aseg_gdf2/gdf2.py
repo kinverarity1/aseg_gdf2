@@ -273,29 +273,31 @@ class GDF2(object):
                 na_values[colname] = null
         logger.debug("_parse_dat: na_values = {}".format(na_values))
 
+        column_dtypes = self.column_dtypes()
+
         value = {
             "": {
                 PandasEngine: {
                     "func": None,
                     "args": [self.dat_filename],
                     "kwargs": {
-                        "names": self.column_names(""),
+                        "names": colnames,
                         "index_col": False,
                         "header": None,
                         "keep_default_na": True,
                         "na_values": na_values,
-                        "dtype": dict(zip(self.column_names(), self.column_dtypes())),
+                        "dtype": dict(zip(colnames, column_dtypes)),
                     },
                 },
                 DaskEngine: {
                     "func": None,
                     "args": [self.dat_filename],
                     "kwargs": {
-                        "names": self.column_names(""),
+                        "names": colnames,
                         "header": None,
                         "keep_default_na": True,
                         "na_values": na_values,
-                        "dtype": dict(zip(self.column_names(), self.column_dtypes())),
+                        "dtype": dict(zip(colnames, column_dtypes)),
                     },
                 },
             }
@@ -436,7 +438,7 @@ class GDF2(object):
         for field in self.record_types[record_type]["fields"]:
             dtype = field["inferred_dtype"]
             dtypesdict[dtype] = dtype
-            dtypes.append(dtype)
+            dtypes.extend([dtype] * field["cols"])
         if retdict:
             return dtypes, dtypesdict
         else:
