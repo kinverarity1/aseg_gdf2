@@ -193,9 +193,11 @@ class GDF2(object):
                             )
                         )
                         continue
-                    f["name"], remaining = field.strip().split(":", 1)
+                    name, remaining = field.strip().split(":", 1)
+                    f["name"] = name.strip()
                     if ":" in remaining:
-                        f["format"], remaining = remaining.strip().split(":", 1)
+                        format, remaining = remaining.strip().split(":", 1)
+                        f["format"] = format.strip()
                         for chunk in remaining.split(","):
                             logger.debug(
                                 f"checking '{chunk}' against unit, name and null regexps"
