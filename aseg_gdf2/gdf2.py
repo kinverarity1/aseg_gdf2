@@ -6,6 +6,7 @@ import re
 import pprint
 
 import pandas as pd
+from dask.array import Array
 from pandas import json_normalize
 from dask import dataframe as dd
 
@@ -557,6 +558,8 @@ class GDF2(object):
         field_arrays = []
         for field_name in field_names:
             array = df[field_to_columns_mapping[field_name]].values
+            if isinstance(array, Array):
+                array.compute_chunk_sizes()
             if array.shape[1] == 1:
                 array = array.ravel()
             field_arrays.append(array)
