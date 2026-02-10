@@ -10,44 +10,54 @@ import pytest
 import aseg_gdf2
 
 
-def test_read_ext_dfn():
-    gdf = aseg_gdf2.read(
-        str(repo / "tests" / "aseg_examples" / "Example_AeroMag_MuppetTown_2009.dfn")
-    )
-
-
-def test_read_ext_des():
-    gdf = aseg_gdf2.read(
-        str(repo / "tests" / "aseg_examples" / "Example_AeroMag_MuppetTown_2009.des")
-    )
-
-
-def test_read_ext_dat():
-    gdf = aseg_gdf2.read(
-        str(repo / "tests" / "aseg_examples" / "Example_AeroMag_MuppetTown_2009.dat")
-    )
-
-
-def test_read_no_ext():
-    gdf = aseg_gdf2.read(
-        str(repo / "tests" / "aseg_examples" / "Example_AeroMag_MuppetTown_2009")
-    )
-
-
-def test_read_incorrect():
-    with pytest.raises(OSError):
+@pytest.mark.parametrize("engine", ["pandas", "dask"])
+@pytest.mark.parametrize("method", ["whitespace", "fixed-widths"])
+class TestAssorted:
+    def test_read_ext_dfn(self, engine, method):
         gdf = aseg_gdf2.read(
-            str(
-                repo
-                / "tests"
-                / "aseg_examples"
-                / "Example_AeroMag_MuppetTown_2009.data"
-            )
+            str(repo / "tests" / "aseg_examples" / "Example_AeroMag_MuppetTown_2009.dfn"),
+            engine=engine,
+            method=method
         )
 
+    def test_read_ext_des(self, engine, method):
+        gdf = aseg_gdf2.read(
+            str(repo / "tests" / "aseg_examples" / "Example_AeroMag_MuppetTown_2009.des"),
+            engine=engine,
+            method=method
+        )
 
-def test_find_dat_file():
-    gdf = aseg_gdf2.read(
-        str(repo / "tests" / "aseg_examples" / "Example_AeroMag_MuppetTown_2009")
-    )
-    assert gdf.dat_filename.lower().endswith("example_aeromag_muppettown_2009.dat")
+    def test_read_ext_dat(self, engine, method):
+        gdf = aseg_gdf2.read(
+            str(repo / "tests" / "aseg_examples" / "Example_AeroMag_MuppetTown_2009.dat"),
+            engine=engine,
+            method=method
+        )
+
+    def test_read_no_ext(self, engine, method):
+        gdf = aseg_gdf2.read(
+            str(repo / "tests" / "aseg_examples" / "Example_AeroMag_MuppetTown_2009"),
+            engine=engine,
+            method=method
+        )
+
+    def test_read_incorrect(self, engine, method):
+        with pytest.raises(OSError):
+            gdf = aseg_gdf2.read(
+                str(
+                    repo
+                    / "tests"
+                    / "aseg_examples"
+                    / "Example_AeroMag_MuppetTown_2009.data"
+                ),
+                engine=engine,
+            method=method
+            )
+
+    def test_find_dat_file(self, engine, method):
+        gdf = aseg_gdf2.read(
+            str(repo / "tests" / "aseg_examples" / "Example_AeroMag_MuppetTown_2009"),
+            engine=engine,
+            method=method
+        )
+        assert gdf.dat_filename.lower().endswith("example_aeromag_muppettown_2009.dat")
