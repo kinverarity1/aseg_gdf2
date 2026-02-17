@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from abc import abstractmethod, ABC
 import glob
 import logging
 import os
@@ -6,6 +6,7 @@ import re
 import pprint
 
 import pandas as pd
+from dask.array import Array
 from pandas import json_normalize
 from dask import dataframe as dd
 
@@ -25,6 +26,10 @@ def read(filename, **kwargs):
             of RAM, or `'dask'` if you are reading huge files which will
             not fit in RAM. Both are equivalent in terms of functionality
             but you should use `'pandas'` if you can.
+        clean_column_names (bool): when enabled, column names are cleaned
+            to prevent invalid names from being replaced with positional
+            ones in iterrows results. Array columns are suffixed with
+            `column_n` instead of `column[n]`.
 
     Returns: :class:`aseg_gdf2.GDF2` object.
 
@@ -92,7 +97,8 @@ class GDF2(object):
 
     """
 
-    def __init__(self, dfn_filename, method="whitespace", engine="pandas", **kwargs):
+    def __init__(self, dfn_filename, method="whitespace", engine="pandas", clean_column_names=False, **kwargs):
+        self.clean_column_names = clean_column_names
         self._nrecords = None
         self._engine = engine
         self._parse_dfn(dfn_filename)
@@ -193,9 +199,11 @@ class GDF2(object):
                             )
                         )
                         continue
-                    f["name"], remaining = field.strip().split(":", 1)
+                    name, remaining = field.strip().split(":", 1)
+                    f["name"] = name.strip()
                     if ":" in remaining:
-                        f["format"], remaining = remaining.strip().split(":", 1)
+                        format, remaining = remaining.strip().split(":", 1)
+                        f["format"] = format.strip()
                         for chunk in remaining.split(","):
                             logger.debug(
                                 f"checking '{chunk}' against unit, name and null regexps"
@@ -273,29 +281,31 @@ class GDF2(object):
                 na_values[colname] = null
         logger.debug("_parse_dat: na_values = {}".format(na_values))
 
+        column_dtypes = self.column_dtypes()
+
         value = {
             "": {
                 PandasEngine: {
                     "func": None,
                     "args": [self.dat_filename],
                     "kwargs": {
-                        "names": self.column_names(""),
+                        "names": colnames,
                         "index_col": False,
                         "header": None,
                         "keep_default_na": True,
                         "na_values": na_values,
-                        "dtype": dict(zip(self.column_names(), self.column_dtypes())),
+                        "dtype": dict(zip(colnames, column_dtypes)),
                     },
                 },
                 DaskEngine: {
                     "func": None,
                     "args": [self.dat_filename],
                     "kwargs": {
-                        "names": self.column_names(""),
+                        "names": colnames,
                         "header": None,
                         "keep_default_na": True,
                         "na_values": na_values,
-                        "dtype": dict(zip(self.column_names(), self.column_dtypes())),
+                        "dtype": dict(zip(colnames, column_dtypes)),
                     },
                 },
             }
@@ -405,21 +415,33 @@ class GDF2(object):
         namesdict = {}
         names = []
         for field in self.record_types[record_type]["fields"]:
-            name = field["name"]
+            name = self._clean_column_name(field["name"]) if self.clean_column_names else field["name"]
             if field["cols"] == 1:
                 namesdict[name] = name
                 names.append(name)
             else:
                 namesdict[name] = []
                 for i in range(field["cols"]):
-                    colname = "{}[{:d}]".format(name, i)
+                    colname = "{}_{:d}".format(name, i) if self.clean_column_names else "{}[{:d}]".format(name, i)
                     namesdict[colname] = name
                     namesdict[name].append(colname)
                     names.append(colname)
+
         if retdict:
             return names, namesdict
         else:
             return names
+
+    def _clean_column_name(self, name):
+        """
+         Clean the column name into an identifier-friendly form to avoid
+         pandas/dask itertuples falling back to positional naming.
+         """
+
+        new_name = re.sub(r"\W+", "_", name)
+        new_name = re.sub(r"^[\d_]+", "", new_name)
+
+        return new_name
 
     def column_dtypes(self, record_type="", retdict=False):
         """Provide a dtype for each column of the data table / pd.DataFrame
@@ -436,7 +458,7 @@ class GDF2(object):
         for field in self.record_types[record_type]["fields"]:
             dtype = field["inferred_dtype"]
             dtypesdict[dtype] = dtype
-            dtypes.append(dtype)
+            dtypes.extend([dtype] * field["cols"])
         if retdict:
             return dtypes, dtypesdict
         else:
@@ -503,7 +525,8 @@ class GDF2(object):
         else:
             columns = []
             for i in range(field["cols"]):
-                columns.append("{}[{:d}]".format(field_name, i))
+                colname = "{}_{:d}".format(field_name, i) if self.clean_column_names else "{}[{:d}]".format(field_name, i)
+                columns.append(colname)
             return tuple(columns)
 
     def get_fields_data(self, field_names, record_type=""):
@@ -535,6 +558,8 @@ class GDF2(object):
         field_arrays = []
         for field_name in field_names:
             array = df[field_to_columns_mapping[field_name]].values
+            if isinstance(array, Array):
+                array.compute_chunk_sizes()
             if array.shape[1] == 1:
                 array = array.ravel()
             field_arrays.append(array)
@@ -549,7 +574,7 @@ class GDF2(object):
         return self.get_fields_data([field_name], record_type=record_type)[0]
 
 
-class Engine(object):
+class Engine(ABC):
     def __init__(self, parent):
         """Create reading engine.
 
@@ -581,18 +606,33 @@ class Engine(object):
         rt, kws = self.expand_field_names(**kwargs)
         return rt["func"](*rt["args"], **kws)
 
-    def iterrows(self, *args, chunksize=5000, **kwargs):
+    @abstractmethod
+    def iterrows(self, *args, **kwargs):
         """Iterate over rows of the data table. Each row is a dict."""
-        for chunk in self.df(*args, chunksize=chunksize, **kwargs):
-            for row in chunk.itertuples():
-                yield dict(row._asdict())
+        pass
 
 
 class PandasEngine(Engine):
     read_fwf = pd.read_fwf
     read_table = pd.read_table
 
+    def iterrows(self, *args, **kwargs):
+        kwargs.setdefault("chunksize", 5000)
+
+        for chunk in self.df(*args, **kwargs):
+            for row in chunk.itertuples():
+                yield dict(row._asdict())
+
 
 class DaskEngine(Engine):
     read_fwf = dd.read_fwf
     read_table = dd.read_table
+
+    def iterrows(self, *args, **kwargs):
+        kwargs.setdefault("blocksize", "64MB")
+
+        for part in self.df(*args, **kwargs).to_delayed():
+            chunk = part.compute()
+
+            for row in chunk.itertuples():
+                yield dict(row._asdict())

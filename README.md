@@ -179,6 +179,17 @@ pip install -U aseg_gdf2
 
 ## List of changes
 
+### Version 0.8
+
+- Column datatype handling now expands correctly for array fields.
+- Definition parsing now tolerates extra whitespace around field names and format specifiers.
+- Support for iterating rows with `iterrows` when using the Dask engine.
+- Added optional `clean_column_names` flag to prevent invalid names from being replaced with positional ones in
+  `iterrows` results.
+- `get_fields_data` now handles unknown chunk sizes when using the Dask engine.
+- Package metadata now requires Python 3.9+.
+- Dependency requirements now include compatible version ranges for the pandas and dask backends.
+
 ### Version 0.3
 - Fix #19 (`GDF2(..., method='fixed-widths')` was broken)
 
